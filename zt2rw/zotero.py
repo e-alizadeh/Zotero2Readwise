@@ -1,28 +1,26 @@
-from dataclasses import dataclass
 from os import environ
-from typing import Dict, Optional
+from typing import Dict
 
 from pyzotero.zotero import Zotero
 from pyzotero.zotero_errors import ParamNotPassed, UnsupportedParams
 
-
-@dataclass
-class ZoteroAnnotation:
-    key: str
-    version: int
-    author: Optional[str] = None
-    image_url: Optional[str] = None
-    source_url: Optional[str] = None
-    source_type: Optional[str] = None
-    category: Optional[str] = None
-    note: Optional[str] = None
-    location: Optional[int] = None
-    location_type: Optional[str] = None
-    highlighted_at: Optional[str] = None
-    highlight_url: Optional[str] = None
-
-    def get_nonempty_params(self) -> Dict:
-        return {k: v for k, v in self.__dict__.items() if v}
+# @dataclass
+# class ZoteroAnnotation:
+#     key: str
+#     version: int
+#     author: Optional[str] = None
+#     image_url: Optional[str] = None
+#     source_url: Optional[str] = None
+#     source_type: Optional[str] = None
+#     category: Optional[str] = None
+#     note: Optional[str] = None
+#     location: Optional[int] = None
+#     location_type: Optional[str] = None
+#     highlighted_at: Optional[str] = None
+#     highlight_url: Optional[str] = None
+#
+#     def get_nonempty_params(self) -> Dict:
+#         return {k: v for k, v in self.__dict__.items() if v}
 
 
 def get_zotero_client(
@@ -76,3 +74,52 @@ def get_zotero_client(
         library_type=library_type,
         api_key=api_key,
     )
+
+
+class ZoteroAnnotationsNotes:
+    def __init__(self, zotero_client: Zotero):
+        self.zot = zotero_client
+        self.cache: Dict = {}
+        self.parent_mapping: Dict = {}
+
+    def get_item_metadata(self, annot: Dict) -> Dict:
+        data = annot["data"]
+        # A Zotero annotation or note must have a parent with parentItem key.
+        parent_item_key = data["parentItem"]
+
+        if parent_item_key in self.parent_mapping:
+            top_item_key = self.parent_mapping[parent_item_key]
+            if top_item_key in self.cache:
+                return self.cache[top_item_key]
+        else:
+            parent_item = self.zot.item(parent_item_key)
+            top_item_key = parent_item["data"].get("parentItem", None)
+            self.parent_mapping[parent_item_key] = (
+                top_item_key if top_item_key else parent_item_key
+            )
+
+        if top_item_key:
+            top_item = self.zot.item(top_item_key)
+            data = top_item["data"]
+        else:
+            top_item = parent_item
+            data = top_item["data"]
+            top_item_key = data["key"]
+
+        metadata = {
+            "title": data["title"],
+            # "date": data["date"],
+            "tags": data["tags"],
+            "source_url": data["url"],
+            "item_type": data["itemType"],
+            "annotation_url": top_item["links"]["self"]["href"],
+            "location": data.get("annotationPageLabel", None),
+        }
+        if "creators" in data:
+            metadata["creators"] = [
+                creator["firstName"] + " " + creator["lastName"]
+                for creator in data["creators"]
+            ]
+
+        self.cache[top_item_key] = metadata
+        return metadata
