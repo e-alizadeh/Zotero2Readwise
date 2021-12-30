@@ -4,9 +4,9 @@ from typing import Dict, List, Optional, Union
 
 import requests
 from pyzotero.zotero import Zotero
-from zotero import ZoteroAnnotationsNotes
 
 from zt2rw.helper import sanitize_tag
+from zt2rw.zotero import ZoteroAnnotationsNotes
 
 
 @dataclass
