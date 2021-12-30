@@ -116,10 +116,11 @@ class ZoteroAnnotationsNotes:
             "location": data.get("annotationPageLabel", None),
         }
         if "creators" in data:
-            metadata["creators"] = [
+            creators = [
                 creator["firstName"] + " " + creator["lastName"]
                 for creator in data["creators"]
             ]
+            metadata["creators"] = ", ".join(creators) if creators else None
 
         self.cache[top_item_key] = metadata
         return metadata
