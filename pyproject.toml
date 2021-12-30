@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "zotero2readwise"
+version = "0.0.1"
+description = ""
+authors = ["ealizadeh <alizadeh.essi@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Pyzotero = "^1.4.26"
+requests = "^2.26.0"
+
+[tool.poetry.dev-dependencies]
+ipython = "^7.30.1"
+pre-commit = "^2.16.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
