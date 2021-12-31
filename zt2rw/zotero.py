@@ -176,7 +176,6 @@ class ZoteroAnnotationsNotes:
 
         if text == "":
             raise ValueError("No annotation or note data is found.")
-
         return ZoteroItem(
             key=data["key"],
             version=data["version"],
@@ -190,7 +189,7 @@ class ZoteroAnnotationsNotes:
             document_tags=metadata["tags"],
             document_type=metadata["document_type"],
             annotation_type=annotation_type,
-            creators=data.get("creators"),
+            creators=metadata.get("creators"),
             source_url=metadata["source_url"],
             page_label=data.get("annotationPageLabel"),
             color=data.get("annotationColor"),
@@ -227,3 +226,15 @@ class ZoteroAnnotationsNotes:
             f"{len(self.failed_items)} annotations/notes failed to format.\n"
             f"Detail of failed items are saved into {self.failed_items_json_filepath}"
         )
+
+
+def retrieve_all_annotations(zotero_client: Zotero) -> List[Dict]:
+    print(
+        "Retrieving ALL annotations from Zotero Database. \nIt may take some time...\n"
+    )
+    return zotero_client.everything(zotero_client.items(itemType="annotation"))
+
+
+def retrieve_all_notes(zotero_client: Zotero) -> List[Dict]:
+    print("Retrieving ALL notes from Zotero Database. \nIt may take some time...\n")
+    return zotero_client.everything(zotero_client.items(itemType="note"))
