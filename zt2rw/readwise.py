@@ -110,14 +110,14 @@ class Readwise:
     def post_zotero_annotations_to_readwise(
         self, zotero_annotations: List[ZoteroItem]
     ) -> None:
+        print(
+            f"Start formatting {len(zotero_annotations)} annotations/notes...\n"
+            f"It may take some time depending on the number of highlights...\n"
+            f"A complete message will show up once it's done!\n"
+        )
         rw_highlights = []
         for annot in zotero_annotations:
             try:
-                print(
-                    f"Start formatting {len(zotero_annotations)} annotations/notes...\n"
-                    f"It may take some time depending on the number of highlights...\n"
-                    f"A complete message will show up once it's done!\n"
-                )
                 rw_highlight = self.convert_zotero_annotation_to_readwise_highlight(
                     annot
                 )
@@ -125,6 +125,7 @@ class Readwise:
                 self.failed_highlights.append(annot)
                 continue
             rw_highlights.append(rw_highlight.get_nonempty_params())
+
         self.create_highlights(rw_highlights)
 
         finished_msg = f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n"
