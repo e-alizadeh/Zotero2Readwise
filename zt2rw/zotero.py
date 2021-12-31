@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
+from json import dump
 from os import environ
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from pyzotero.zotero import Zotero
@@ -97,25 +99,30 @@ def get_zotero_client(
 
 
 class ZoteroAnnotationsNotes:
-    def __init__(self, zotero_client: Zotero):
+    def __init__(self, zotero_client: Zotero, json_filepath_failed_items: str = None):
         self.zot = zotero_client
         self.failed_items: List[Dict] = []
-        self.cache: Dict = {}
-        self.parent_mapping: Dict = {}
+        self._cache: Dict = {}
+        self._parent_mapping: Dict = {}
+
+        if json_filepath_failed_items:
+            self.failed_items_json_filepath = Path(json_filepath_failed_items)
+        else:
+            self.failed_items_json_filepath = Path("failed_zotero_items_to_format.json")
 
     def get_item_metadata(self, annot: Dict) -> Dict:
         data = annot["data"]
         # A Zotero annotation or note must have a parent with parentItem key.
         parent_item_key = data["parentItem"]
 
-        if parent_item_key in self.parent_mapping:
-            top_item_key = self.parent_mapping[parent_item_key]
-            if top_item_key in self.cache:
-                return self.cache[top_item_key]
+        if parent_item_key in self._parent_mapping:
+            top_item_key = self._parent_mapping[parent_item_key]
+            if top_item_key in self._cache:
+                return self._cache[top_item_key]
         else:
             parent_item = self.zot.item(parent_item_key)
             top_item_key = parent_item["data"].get("parentItem", None)
-            self.parent_mapping[parent_item_key] = (
+            self._parent_mapping[parent_item_key] = (
                 top_item_key if top_item_key else parent_item_key
             )
 
@@ -140,7 +147,7 @@ class ZoteroAnnotationsNotes:
                 for creator in data["creators"]
             ]
 
-        self.cache[top_item_key] = metadata
+        self._cache[top_item_key] = metadata
         return metadata
 
     def format_item(self, annot: Dict) -> ZoteroItem:
@@ -191,10 +198,31 @@ class ZoteroAnnotationsNotes:
 
     def format_items(self, annots: List[Dict]) -> List[ZoteroItem]:
         formatted_annots = []
+        print(
+            f"Start formatting {len(annots)} annotations/notes...\n"
+            f"It may take some time depending on the number of annotations...\n"
+            f"A complete message will show up once it's done!\n"
+        )
         for annot in annots:
             try:
                 formatted_annots.append(self.format_item(annot))
             except:
                 self.failed_items.append(annot)
                 continue
+
+        finished_msg = "\nFormatting job is done!!\n"
+        if self.failed_items:
+            finished_msg += (
+                f"NOTE: {len(self.failed_items)} annotations/notes (out of {len(annots)}) failed to format.\n"
+                f"You can run `save_failed_items_to_json()` class method to save those items."
+            )
+        print(finished_msg)
         return formatted_annots
+
+    def save_failed_items_to_json(self):
+        with open(self.failed_items_json_filepath, "w") as f:
+            dump(self.failed_items, f)
+        print(
+            f"{len(self.failed_items)} annotations/notes failed to format.\n"
+            f"Detail of failed items are saved into {self.failed_items_json_filepath}"
+        )
