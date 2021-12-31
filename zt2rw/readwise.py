@@ -50,16 +50,11 @@ class ReadwiseHighlight:
 
 
 class Readwise:
-    def __init__(self, readwise_token: str, json_filepath_failed_items: str = None):
+    def __init__(self, readwise_token: str):
         self._token = readwise_token
         self._header = {"Authorization": f"Token {self._token}"}
         self.endpoints = ReadwiseAPI
         self.failed_highlights: List = []
-
-        if json_filepath_failed_items:
-            self.failed_items_json_filepath = Path(json_filepath_failed_items)
-        else:
-            self.failed_items_json_filepath = Path("failed_readwise_items.json")
 
     def create_highlights(self, highlights: List[Dict]) -> None:
         requests.post(
@@ -136,10 +131,15 @@ class Readwise:
             )
         print(finished_msg)
 
-    def save_failed_items_to_json(self):
-        with open(self.failed_items_json_filepath, "w") as f:
+    def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
+        if json_filepath_failed_items:
+            out_filepath = Path(json_filepath_failed_items)
+        else:
+            out_filepath = Path("failed_readwise_items.json")
+
+        with open(out_filepath, "w") as f:
             dump(self.failed_highlights, f)
         print(
             f"{len(self.failed_highlights)} highlights failed to format (hence failed to upload to Readwise).\n"
-            f"Detail of failed items are saved into {self.failed_items_json_filepath}"
+            f"Detail of failed items are saved into {out_filepath}"
         )

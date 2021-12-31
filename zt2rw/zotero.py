@@ -100,16 +100,11 @@ def get_zotero_client(
 
 
 class ZoteroAnnotationsNotes:
-    def __init__(self, zotero_client: Zotero, json_filepath_failed_items: str = None):
+    def __init__(self, zotero_client: Zotero):
         self.zot = zotero_client
         self.failed_items: List[Dict] = []
         self._cache: Dict = {}
         self._parent_mapping: Dict = {}
-
-        if json_filepath_failed_items:
-            self.failed_items_json_filepath = Path(json_filepath_failed_items)
-        else:
-            self.failed_items_json_filepath = Path("failed_zotero_items.json")
 
     def get_item_metadata(self, annot: Dict) -> Dict:
         data = annot["data"]
@@ -219,12 +214,16 @@ class ZoteroAnnotationsNotes:
         print(finished_msg)
         return formatted_annots
 
-    def save_failed_items_to_json(self):
-        with open(self.failed_items_json_filepath, "w") as f:
+    def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
+        if json_filepath_failed_items:
+            out_filepath = Path(json_filepath_failed_items)
+        else:
+            out_filepath = Path("failed_zotero_items.json")
+        with open(out_filepath, "w") as f:
             dump(self.failed_items, f)
         print(
             f"{len(self.failed_items)} annotations/notes failed to format.\n"
-            f"Detail of failed items are saved into {self.failed_items_json_filepath}"
+            f"Detail of failed items are saved into {out_filepath}"
         )
 
 
