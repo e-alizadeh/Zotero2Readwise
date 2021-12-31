@@ -7,6 +7,8 @@ from typing import Dict, List, Optional
 from pyzotero.zotero import Zotero
 from pyzotero.zotero_errors import ParamNotPassed, UnsupportedParams
 
+from zt2rw import FAILED_ITEMS_DIR
+
 
 @dataclass
 class ZoteroItem:
@@ -215,10 +217,11 @@ class ZoteroAnnotationsNotes:
         return formatted_annots
 
     def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
+        FAILED_ITEMS_DIR.mkdir(parents=True, exist_ok=True)
         if json_filepath_failed_items:
-            out_filepath = Path(json_filepath_failed_items)
+            out_filepath = FAILED_ITEMS_DIR.joinpath(json_filepath_failed_items)
         else:
-            out_filepath = Path("failed_zotero_items.json")
+            out_filepath = FAILED_ITEMS_DIR.joinpath("failed_zotero_items.json")
         with open(out_filepath, "w") as f:
             dump(self.failed_items, f)
         print(

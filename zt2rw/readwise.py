@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Union
 
 import requests
 
+from zt2rw import FAILED_ITEMS_DIR
 from zt2rw.helper import sanitize_tag
 from zt2rw.zotero import ZoteroItem
 
@@ -132,10 +133,11 @@ class Readwise:
         print(finished_msg)
 
     def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
+        FAILED_ITEMS_DIR.mkdir(parents=True, exist_ok=True)
         if json_filepath_failed_items:
-            out_filepath = Path(json_filepath_failed_items)
+            out_filepath = FAILED_ITEMS_DIR.joinpath(json_filepath_failed_items)
         else:
-            out_filepath = Path("failed_readwise_items.json")
+            out_filepath = FAILED_ITEMS_DIR.joinpath("failed_readwise_items.json")
 
         with open(out_filepath, "w") as f:
             dump(self.failed_highlights, f)
