@@ -2,8 +2,8 @@ from argparse import ArgumentParser
 from distutils.util import strtobool
 from typing import Dict, List
 
-from zt2rw.readwise import Readwise
-from zt2rw.zotero import (
+from zotero2readwise.readwise import Readwise
+from zotero2readwise.zotero import (
     ZoteroAnnotationsNotes,
     get_zotero_client,
     retrieve_all_annotations,

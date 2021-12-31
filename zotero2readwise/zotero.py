@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from pyzotero.zotero import Zotero
 from pyzotero.zotero_errors import ParamNotPassed, UnsupportedParams
 
-from zt2rw import FAILED_ITEMS_DIR
+from zotero2readwise import FAILED_ITEMS_DIR
 
 
 @dataclass

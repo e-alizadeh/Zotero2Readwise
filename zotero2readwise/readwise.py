@@ -5,9 +5,9 @@ from typing import Dict, List, Optional, Union
 
 import requests
 
-from zt2rw import FAILED_ITEMS_DIR
-from zt2rw.helper import sanitize_tag
-from zt2rw.zotero import ZoteroItem
+from zotero2readwise import FAILED_ITEMS_DIR
+from zotero2readwise.helper import sanitize_tag
+from zotero2readwise.zotero import ZoteroItem
 
 
 @dataclass
