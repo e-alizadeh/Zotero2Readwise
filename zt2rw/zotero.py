@@ -35,6 +35,7 @@ class ZoteroItem:
 
         if self.document_tags:
             self.document_tags = [d_["tag"] for d_ in self.document_tags]
+
         # Sample {'dc:relation': ['http://zotero.org/users/123/items/ABC', 'http://zotero.org/users/123/items/DEF']}
         if self.relations:
             self.relations = self.relations.get("dc:relation")
@@ -108,7 +109,7 @@ class ZoteroAnnotationsNotes:
         if json_filepath_failed_items:
             self.failed_items_json_filepath = Path(json_filepath_failed_items)
         else:
-            self.failed_items_json_filepath = Path("failed_zotero_items_to_format.json")
+            self.failed_items_json_filepath = Path("failed_zotero_items.json")
 
     def get_item_metadata(self, annot: Dict) -> Dict:
         data = annot["data"]
