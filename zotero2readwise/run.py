@@ -44,13 +44,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--include_annotations",
         type=str,
-        default="true",
+        default="y",
         help="Include Zotero annotations (highlights + comments) | Options: 'y'/'yes' (default), 'n'/'no'",
     )
     parser.add_argument(
         "--include_notes",
         type=str,
-        default="true",
+        default="n",
         help="Include Zotero notes | Options: 'y'/'yes' (default), 'n'/'no'",
     )
 
