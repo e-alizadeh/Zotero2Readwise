@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
 from json import dump
-from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import requests
