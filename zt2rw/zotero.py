@@ -1,26 +1,46 @@
+from dataclasses import dataclass, field
 from os import environ
-from typing import Dict
+from typing import Dict, List, Optional
 
 from pyzotero.zotero import Zotero
 from pyzotero.zotero_errors import ParamNotPassed, UnsupportedParams
 
-# @dataclass
-# class ZoteroAnnotation:
-#     key: str
-#     version: int
-#     author: Optional[str] = None
-#     image_url: Optional[str] = None
-#     source_url: Optional[str] = None
-#     source_type: Optional[str] = None
-#     category: Optional[str] = None
-#     note: Optional[str] = None
-#     location: Optional[int] = None
-#     location_type: Optional[str] = None
-#     highlighted_at: Optional[str] = None
-#     highlight_url: Optional[str] = None
-#
-#     def get_nonempty_params(self) -> Dict:
-#         return {k: v for k, v in self.__dict__.items() if v}
+
+@dataclass
+class ZoteroItem:
+    key: str
+    version: int
+    item_type: str
+    text: str
+    annotated_at: str
+    annotation_url: str
+    comment: Optional[str] = None
+    title: Optional[str] = None
+    tags: Optional[List[Dict]] = field(init=True, default=None)
+    document_tags: Optional[List[Dict]] = field(init=True, default=None)
+    document_type: Optional[int] = None
+    annotation_type: Optional[str] = None
+    creators: Optional[List[str]] = field(init=True, default=None)
+    source_url: Optional[str] = None
+    page_label: Optional[str] = None
+    color: Optional[str] = None
+    relations: Optional[Dict] = field(init=True, default=None)
+
+    def __post_init__(self):
+        # Convert [{'tag': 'abc'}, {'tag': 'def'}] -->  ['abc', 'def']
+        if self.tags:
+            self.tags = [d_["tag"] for d_ in self.tags]
+
+        if self.document_tags:
+            self.document_tags = [d_["tag"] for d_ in self.document_tags]
+        # Sample {'dc:relation': ['http://zotero.org/users/123/items/ABC', 'http://zotero.org/users/123/items/DEF']}
+        if self.relations:
+            self.relations = self.relations.get("dc:relation")
+
+        self.creators = ", ".join(self.creators) if self.creators else None
+
+    def get_nonempty_params(self) -> Dict:
+        return {k: v for k, v in self.__dict__.items() if v}
 
 
 def get_zotero_client(
@@ -79,6 +99,7 @@ def get_zotero_client(
 class ZoteroAnnotationsNotes:
     def __init__(self, zotero_client: Zotero):
         self.zot = zotero_client
+        self.failed_items: List[Dict] = []
         self.cache: Dict = {}
         self.parent_mapping: Dict = {}
 
@@ -110,17 +131,70 @@ class ZoteroAnnotationsNotes:
             "title": data["title"],
             # "date": data["date"],
             "tags": data["tags"],
-            "source_url": data["url"],
-            "item_type": data["itemType"],
-            "annotation_url": top_item["links"]["self"]["href"],
-            "location": data.get("annotationPageLabel", None),
+            "document_type": data["itemType"],
+            "source_url": top_item["links"]["self"]["href"],
         }
         if "creators" in data:
-            creators = [
+            metadata["creators"] = [
                 creator["firstName"] + " " + creator["lastName"]
                 for creator in data["creators"]
             ]
-            metadata["creators"] = ", ".join(creators) if creators else None
 
         self.cache[top_item_key] = metadata
         return metadata
+
+    def format_item(self, annot: Dict) -> ZoteroItem:
+        data = annot["data"]
+        item_type = data["itemType"]
+        annotation_type = data.get("annotationType")
+        metadata = self.get_item_metadata(annot)
+
+        text = ""
+        comment = ""
+        if item_type == "annotation":
+            if annotation_type == "highlight":
+                text = data["annotationText"]
+                comment = data["annotationComment"]
+            elif annotation_type == "note":
+                text = data["annotationComment"]
+                comment = ""
+        elif item_type == "note":
+            text = data["note"]
+            comment = ""
+        else:
+            raise NotImplementedError(
+                "Only Zotero item types of 'note' and 'annotation' are supported."
+            )
+
+        if text == "":
+            raise ValueError("No annotation or note data is found.")
+
+        return ZoteroItem(
+            key=data["key"],
+            version=data["version"],
+            item_type=item_type,
+            text=text,
+            annotated_at=data["dateModified"],
+            annotation_url=annot["links"]["self"]["href"],
+            comment=comment,
+            title=metadata["title"],
+            tags=data["tags"],
+            document_tags=metadata["tags"],
+            document_type=metadata["document_type"],
+            annotation_type=annotation_type,
+            creators=data.get("creators"),
+            source_url=metadata["source_url"],
+            page_label=data.get("annotationPageLabel"),
+            color=data.get("annotationColor"),
+            relations=data["relations"],
+        )
+
+    def format_items(self, annots: List[Dict]) -> List[ZoteroItem]:
+        formatted_annots = []
+        for annot in annots:
+            try:
+                formatted_annots.append(self.format_item(annot))
+            except:
+                self.failed_items.append(annot)
+                continue
+        return formatted_annots
