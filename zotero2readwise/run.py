@@ -72,8 +72,11 @@ if __name__ == "__main__":
         api_key=args["zotero_key"],
     )
 
-    annots = retrieve_all_annotations(zot_client)
-    notes = retrieve_all_notes(zot_client)
+    annots, notes = [], []
+    if args["include_annotations"]:
+        annots = retrieve_all_annotations(zot_client)
+    if args["include_notes"]:
+        notes = retrieve_all_notes(zot_client)
 
     # Combine the list of al annots and notes
     all_zotero_items = annots + notes
