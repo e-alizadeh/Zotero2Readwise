@@ -1,27 +1,7 @@
 from argparse import ArgumentParser
 from distutils.util import strtobool
-from typing import Dict, List
 
-from zotero2readwise.readwise import Readwise
-from zotero2readwise.zotero import (
-    ZoteroAnnotationsNotes,
-    get_zotero_client,
-    retrieve_all_annotations,
-    retrieve_all_notes,
-)
-
-
-def run(
-    zot: ZoteroAnnotationsNotes, rw: Readwise, zot_annots_notes: List[Dict]
-) -> None:
-    formatted_items = zot.format_items(zot_annots_notes)
-    if zot.failed_items:
-        zot.save_failed_items_to_json("failed_zotero_items.json")
-
-    rw.post_zotero_annotations_to_readwise(formatted_items)
-    if rw.failed_highlights:
-        rw.save_failed_items_to_json("failed_readwise_highlights.json")
-
+from zotero2readwise.zt2rw import Zotero2Readwise
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Generate Markdown files")
@@ -33,7 +13,7 @@ if __name__ == "__main__":
         "zotero_key", help="Zotero API key (visit https://www.zotero.org/settings/keys)"
     )
     parser.add_argument(
-        "zotero_user_id",
+        "zotero_library_id",
         help="Zotero User ID (visit https://www.zotero.org/settings/keys)",
     )
     parser.add_argument(
@@ -65,26 +45,12 @@ if __name__ == "__main__":
                 f"Invalid value for --{bool_arg}. Use 'n' or 'y' (default)."
             )
 
-    # ----- Create a Zotero client object
-    zot_client = get_zotero_client(
-        library_id=args["zotero_user_id"],
-        library_type=args["library_type"],
-        api_key=args["zotero_key"],
+    zt2rw = Zotero2Readwise(
+        readwise_token=args["readwise_token"],
+        zotero_key=args["zotero_key"],
+        zotero_library_id=args["zotero_library_id"],
+        zotero_library_type=args["library_type"],
+        include_annotations=args["include_annotations"],
+        include_notes=args["include_notes"],
     )
-
-    annots, notes = [], []
-    if args["include_annotations"]:
-        annots = retrieve_all_annotations(zot_client)
-    if args["include_notes"]:
-        notes = retrieve_all_notes(zot_client)
-
-    # Combine the list of al annots and notes
-    all_zotero_items = annots + notes
-    all_zotero_items = all_zotero_items[0:5] + all_zotero_items[-5:-1]
-
-    if all_zotero_items:
-        run(
-            zot=ZoteroAnnotationsNotes(zot_client),
-            rw=Readwise(readwise_token=args["readwise_token"]),
-            zot_annots_notes=all_zotero_items,
-        )
+    zt2rw.run_all()
