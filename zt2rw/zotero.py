@@ -18,11 +18,11 @@ class ZoteroItem:
     annotation_url: str
     comment: Optional[str] = None
     title: Optional[str] = None
-    tags: Optional[List[Dict]] = field(init=True, default=None)
+    tags: Optional[List[str]] = field(init=True, default=None)
     document_tags: Optional[List[Dict]] = field(init=True, default=None)
     document_type: Optional[int] = None
     annotation_type: Optional[str] = None
-    creators: Optional[List[str]] = field(init=True, default=None)
+    creators: Optional[str] = field(init=True, default=None)
     source_url: Optional[str] = None
     page_label: Optional[str] = None
     color: Optional[str] = None
