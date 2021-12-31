@@ -1,9 +1,19 @@
 [tool.poetry]
 name = "zotero2readwise"
-version = "0.0.1"
+version = "0.0.0"
 description = ""
 authors = ["ealizadeh <alizadeh.essi@gmail.com>"]
 license = "MIT"
+
+[tool.semantic_release]
+version_variable = [
+    "zt2rw/__init__.py:__version__",
+    "pyproject.toml:version"
+]
+branch = "release"
+upload_to_repository = true
+upload_to_release = true
+build_command = "pip install poetry && poetry build"
 
 [tool.poetry.dependencies]
 python = "^3.8"

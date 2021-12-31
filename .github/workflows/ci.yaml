@@ -1,0 +1,80 @@
+name: Test and Build
+on:
+  push:
+    branches:
+      - master
+      - release
+      - 'feature/*'
+      - 'bugfix/*'
+    paths-ignore:
+      - '**.md'
+jobs:
+#  Test:
+#    runs-on: ubuntu-latest
+#    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+#    defaults:
+#      run:
+#        shell: bash -l {0}
+#
+#    steps:
+#      - name: 📥 Checkout repo
+#        uses: actions/checkout@v2
+#        with:
+#          fetch-depth: 0
+#
+#      - name: 🐍  Setup Python
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: 3.8
+#
+#      - name: 🟢 Create Conda environment using Mambaforge
+#        uses: conda-incubator/setup-miniconda@v2
+#        with:
+#          miniforge-variant: Mambaforge
+#          activate-environment: zt2md
+#          environment-file: dev-env.yaml
+#          auto-activate-base: false
+#          use-mamba: true
+#
+#      - name: 📅 Set cache date
+#        run: echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+#
+#      - name: 🗄️ Set up Cache for conda environment
+#        uses: actions/cache@v2
+#        with:
+#          path: /usr/share/miniconda3/envs/zt2md
+#          key: linux-64-conda-${{ hashFiles('dev-env.yml') }}-${{ env.DATE }}-${{ env.CACHE_NUMBER }}
+#        id: cache
+#
+#      - name: 🐍 Setup Poetry
+#        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+#
+#      - name: ⚙ Install PyPi packages via Poetry
+#        run: poetry install
+#        if: steps.cache.outputs.cache-hit != 'true'
+#
+#      - name: 🕵️ Run pytest
+#        run: pytest --cov-report xml:coverage.xml
+
+  Release:
+#    needs: Test
+    runs-on: ubuntu-latest
+    if:  github.ref_name == 'release'
+
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: 🐍  Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: 📤 Publish Package (via Semantic Release)
+        uses: relekang/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          repository_username: __token__
+          repository_password: ${{ secrets.PYPI_TOKEN }}
