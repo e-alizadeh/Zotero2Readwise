@@ -65,7 +65,6 @@ zt_rw.run_all()
 ## Approach 2:
 You can use the `run.py` script. Run `python run.py -h` to get more information about all options. 
 You can simply run the script as the following:
-
 ```shell
 python run.py <readwise_token> <zotero_key> <zotero_id> 
 ```
