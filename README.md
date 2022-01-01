@@ -55,14 +55,14 @@ zt_rw = Zotero2Readwise(
     readwise_token="your_readwise_access_token",  # Visit https://readwise.io/access_token)
     zotero_key="your_zotero_key",  # Visit https://www.zotero.org/settings/keys
     zotero_library_id="your_zotero_id", # Visit https://www.zotero.org/settings/keys
-    zotero_library_type="user", # "user" or "group"
+    zotero_library_type="user", # "user" (default) or "group"
     include_annotations=True, # Include Zotero annotations -> Default: True
     include_notes=False, # Include Zotero notes -> Default: False
 )
 zt_rw.run()
 ```
 
-## Approach 2:
+## Approach 2
 You can use the `run.py` script. Run `python run.py -h` to get more information about all options. 
 You can simply run the script as the following:
 ```shell
