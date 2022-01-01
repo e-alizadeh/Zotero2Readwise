@@ -12,7 +12,6 @@ keywords = [
     "Zotero",
     "Readwise",
 ]
-license = "MIT"
 classifiers = [
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Libraries :: Python Modules",
