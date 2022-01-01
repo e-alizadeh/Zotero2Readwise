@@ -59,7 +59,7 @@ zt_rw = Zotero2Readwise(
     include_annotations=True, # Include Zotero annotations -> Default: True
     include_notes=False, # Include Zotero notes -> Default: False
 )
-zt_rw.run_all()
+zt_rw.run()
 ```
 
 ## Approach 2:
