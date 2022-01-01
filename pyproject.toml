@@ -7,7 +7,7 @@ license = "MIT"
 
 [tool.semantic_release]
 version_variable = [
-    "zt2rw/__init__.py:__version__",
+    "zotero2readwise/__init__.py:__version__",
     "pyproject.toml:version"
 ]
 branch = "release"
