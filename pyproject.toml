@@ -1,9 +1,26 @@
 [tool.poetry]
 name = "zotero2readwise"
 version = "0.1.0"
-description = ""
-authors = ["ealizadeh <alizadeh.essi@gmail.com>"]
+description = "Export your Zotero annotations and notes to Readwise"
+readme = "README.md"
+authors = ["ealizadeh <hello@ealizadeh.com>"]
 license = "MIT"
+homepage = "https://github.com/e-alizadeh/Zotero2Readwise"
+repository = "https://github.com/e-alizadeh/Zotero2Readwise"
+documentation = "https://github.com/e-alizadeh/Zotero2Readwise"
+keywords = [
+    "Zotero",
+    "Readwise",
+]
+license = "MIT"
+classifiers = [
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Utilities",
+    "Development Status :: 3 - Alpha"
+]
 
 [tool.semantic_release]
 version_variable = [
