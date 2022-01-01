@@ -42,7 +42,6 @@ class Zotero2Readwise:
 
     def run_all(self) -> None:
         zot_annots_notes = self.get_all_zotero_items()
-        zot_annots_notes = zot_annots_notes[0:5]
         formatted_items = self.zotero.format_items(zot_annots_notes)
         if self.zotero.failed_items:
             self.zotero.save_failed_items_to_json("failed_zotero_items.json")
