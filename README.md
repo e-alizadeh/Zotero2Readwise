@@ -12,6 +12,7 @@ If you annotate your files outside the new Zotero PDF reader, this library may n
 
 **_This library is for you if you annotate (highlight + note) using the Zotero's PDF reader (including the Zotero iOS)_**
 
+👉***Updating an existing Zotero annotation or note and re-running this library will update the corresponding Readwise highlight without creating a duplicate!***
 
 † Annotations made in the new Zotero PDF reader and note editor.
 
