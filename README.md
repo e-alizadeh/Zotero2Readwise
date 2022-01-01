@@ -15,7 +15,10 @@ If you annotate your files outside the new Zotero PDF reader, this library may n
 
 † Annotations made in the new Zotero PDF reader and note editor.
 
-§ Readwise is a _paid_ service/software that integrates your highlights from almost everywhere (Pocket, Instapaper, Twitter, Medium, Apple Books, and many more). It even has an amazing OCR for directly importing your highlights on a physical book/article into Readwise and allowing you to export all your highlights to Obsidian, Notion, Roam, Markdown, etc. Moreover It has an automated [Spaced Repition](https://en.wikipedia.org/wiki/Spaced_repetition) and []Active Recall](https://en.wikipedia.org/wiki/Testing_effect). You can use the the link [here](https://readwise.io/i/essi) to get an extra free month (*Disclaimer: I will get a free month too!*)
+§ Readwise is a _paid_ service/software that integrates your highlights from almost everywhere (Pocket, Instapaper, Twitter, Medium, Apple Books, and many more). 
+It even has an amazing OCR for directly importing your highlights on a physical book/article into Readwise and allowing 
+you to export all your highlights to Obsidian, Notion, Roam, Markdown, etc. 
+Moreover, It has an automated [Spaced Repition](https://en.wikipedia.org/wiki/Spaced_repetition) and [Active Recall](https://en.wikipedia.org/wiki/Testing_effect). You can use the the link [here](https://readwise.io/i/essi) to get an extra free month (*Disclaimer: I will get a free month too!*)
 
 ---
 
