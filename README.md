@@ -12,10 +12,14 @@ If you annotate your files outside the new Zotero PDF reader, this library may n
 
 **_This library is for you if you annotate (highlight + note) using the Zotero's PDF reader (including the Zotero iOS)_**
 
+👉***Updating an existing Zotero annotation or note and re-running this library will update the corresponding Readwise highlight without creating a duplicate!***
 
 † Annotations made in the new Zotero PDF reader and note editor.
 
-§ Readwise is a _paid_ service/software that integrates your highlights from almost everywhere (Pocket, Instapaper, Twitter, Medium, Apple Books, and many more). It even has an amazing OCR for directly importing your highlights on a physical book/article into Readwise and allowing you to export all your highlights to Obsidian, Notion, Roam, Markdown, etc. Moreover It has an automated [Spaced Repition](https://en.wikipedia.org/wiki/Spaced_repetition) and []Active Recall](https://en.wikipedia.org/wiki/Testing_effect). You can use the the link [here](https://readwise.io/i/essi) to get an extra free month (*Disclaimer: I will get a free month too!*)
+§ Readwise is a _paid_ service/software that integrates your highlights from almost everywhere (Pocket, Instapaper, Twitter, Medium, Apple Books, and many more). 
+It even has an amazing OCR for directly importing your highlights on a physical book/article into Readwise and allowing 
+you to export all your highlights to Obsidian, Notion, Roam, Markdown, etc. 
+Moreover, It has an automated [Spaced Repition](https://en.wikipedia.org/wiki/Spaced_repetition) and [Active Recall](https://en.wikipedia.org/wiki/Testing_effect). You can use the the link [here](https://readwise.io/i/essi) to get an extra free month (*Disclaimer: I will get a free month too!*)
 
 ---
 
@@ -51,17 +55,16 @@ zt_rw = Zotero2Readwise(
     readwise_token="your_readwise_access_token",  # Visit https://readwise.io/access_token)
     zotero_key="your_zotero_key",  # Visit https://www.zotero.org/settings/keys
     zotero_library_id="your_zotero_id", # Visit https://www.zotero.org/settings/keys
-    zotero_library_type="user", # "user" or "group"
+    zotero_library_type="user", # "user" (default) or "group"
     include_annotations=True, # Include Zotero annotations -> Default: True
     include_notes=False, # Include Zotero notes -> Default: False
 )
-zt_rw.run_all()
+zt_rw.run()
 ```
 
-## Approach 2:
+## Approach 2
 You can use the `run.py` script. Run `python run.py -h` to get more information about all options. 
 You can simply run the script as the following:
-
 ```shell
 python run.py <readwise_token> <zotero_key> <zotero_id> 
 ```

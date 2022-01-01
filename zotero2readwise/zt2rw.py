@@ -40,9 +40,9 @@ class Zotero2Readwise:
         print(f"{len(all_zotero_items)} Zotero items are retrieved.")
         return all_zotero_items
 
-    def run_all(self) -> None:
-        zot_annots_notes = self.get_all_zotero_items()
-        zot_annots_notes = zot_annots_notes[0:5]
+    def run(self, zot_annots_notes: List[Dict] = None) -> None:
+        if zot_annots_notes is None:
+            zot_annots_notes = self.get_all_zotero_items()
         formatted_items = self.zotero.format_items(zot_annots_notes)
         if self.zotero.failed_items:
             self.zotero.save_failed_items_to_json("failed_zotero_items.json")
