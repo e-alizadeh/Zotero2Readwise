@@ -113,6 +113,13 @@ class Readwise:
         rw_highlights = []
         for annot in zotero_annotations:
             try:
+                if len(annot.text) >= 8191:
+                    print(
+                        f"A Zotero annotation from an item with {annot.title} (item_key={annot.key} and "
+                        f"version={annot.version}) cannot be uploaded since the highlight/note is very long. "
+                        f"A Readwise highlight can be up to 8191 characters."
+                    )
+                    self.failed_highlights.append(annot)
                 rw_highlight = self.convert_zotero_annotation_to_readwise_highlight(
                     annot
                 )
