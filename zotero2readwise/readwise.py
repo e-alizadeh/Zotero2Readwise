@@ -142,13 +142,14 @@ class Readwise:
             rw_highlights.append(rw_highlight.get_nonempty_params())
         self.create_highlights(rw_highlights)
 
-        finished_msg = f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n\n"
+        finished_msg = ""
         if self.failed_highlights:
-            finished_msg += (
-                f"NOTE: {len(self.failed_highlights)} highlights (out of {len(self.failed_highlights)}) failed "
+            finished_msg = (
+                f"\nNOTE: {len(self.failed_highlights)} highlights (out of {len(self.failed_highlights)}) failed "
                 f"to upload to Readwise.\n"
-                f"You can run `save_failed_items_to_json()` class method to save those items.\n"
             )
+
+        finished_msg += f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n\n"
         print(finished_msg)
 
     def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
