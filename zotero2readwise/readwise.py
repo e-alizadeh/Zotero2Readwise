@@ -118,7 +118,7 @@ class Readwise:
         self, zotero_annotations: List[ZoteroItem]
     ) -> None:
         print(
-            f"Start formatting {len(zotero_annotations)} annotations/notes...\n"
+            f"\nReadwise: Push {len(zotero_annotations)} Zotero annotations/notes to Readwise...\n"
             f"It may take some time depending on the number of highlights...\n"
             f"A complete message will show up once it's done!\n"
         )
@@ -142,11 +142,12 @@ class Readwise:
             rw_highlights.append(rw_highlight.get_nonempty_params())
         self.create_highlights(rw_highlights)
 
-        finished_msg = f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n"
+        finished_msg = f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n\n"
         if self.failed_highlights:
             finished_msg += (
-                f"NOTE: {len(self.failed_highlights)} highlights (out of {len(self.failed_highlights)}) failed.\n"
-                f"You can run `save_failed_items_to_json()` class method to save those items."
+                f"NOTE: {len(self.failed_highlights)} highlights (out of {len(self.failed_highlights)}) failed "
+                f"to upload to Readwise.\n"
+                f"You can run `save_failed_items_to_json()` class method to save those items.\n"
             )
         print(finished_msg)
 
