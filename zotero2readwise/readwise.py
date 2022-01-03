@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Union
 import requests
 
 from zotero2readwise import FAILED_ITEMS_DIR
+from zotero2readwise.exception import Zotero2ReadwiseError
 from zotero2readwise.helper import sanitize_tag
 from zotero2readwise.zotero import ZoteroItem
 
@@ -57,11 +58,22 @@ class Readwise:
         self.failed_highlights: List = []
 
     def create_highlights(self, highlights: List[Dict]) -> None:
-        requests.post(
+        resp = requests.post(
             url=self.endpoints.highlights,
             headers=self._header,
             json={"highlights": highlights},
         )
+        if resp.status_code != 200:
+            error_log_file = (
+                f"error_log_{resp.status_code}_failed_post_request_to_readwise.json"
+            )
+            with open(error_log_file, "w") as f:
+                dump(resp.json(), f)
+            raise Zotero2ReadwiseError(
+                f"Uploading to Readwise failed with following details:\n"
+                f"POST request Status Code={resp.status_code} ({resp.reason})\n"
+                f"Error log is saved to {error_log_file} file."
+            )
 
     @staticmethod
     def convert_tags_to_readwise_format(tags: List[str]) -> str:
@@ -127,7 +139,6 @@ class Readwise:
                 self.failed_highlights.append(annot)
                 continue
             rw_highlights.append(rw_highlight.get_nonempty_params())
-
         self.create_highlights(rw_highlights)
 
         finished_msg = f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n"
