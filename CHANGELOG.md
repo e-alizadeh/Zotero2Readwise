@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.1 (2022-01-03)
+### Fix
+* Get non-empty objects from ZoteroItem (so that we have a JSON serializable object) ([`6b79fc9`](https://github.com/e-alizadeh/Zotero2Readwise/commit/6b79fc9bf457acd78287a8f0cbe1800f335e52fc))
+* Ignore highlights more than 8191 characters (readwise limit for a highlight.) ([`7503324`](https://github.com/e-alizadeh/Zotero2Readwise/commit/7503324150d50db72abd3c3cbfda8b469a7d596d))
+
+### Documentation
+* Improve printouts for both Zotero and Readwise operations ([`5a22717`](https://github.com/e-alizadeh/Zotero2Readwise/commit/5a22717987a509c123b233dfd33aeded1a9902cd))
+* Define Zotero2ReadwiseError exception object. ([`7d5022a`](https://github.com/e-alizadeh/Zotero2Readwise/commit/7d5022a0ebc28e170e07dc004042981b2be7e314))
+
 ## v0.2.0 (2022-01-01)
 ### Feature
 * Refactor `Zotero2Readwise.run()` to pass a custom number of Zotero annotations and notes instead of running all. ([`7c8a337`](https://github.com/e-alizadeh/Zotero2Readwise/commit/7c8a3372b642e3056c5279dcfa06470eb6981f34))
