@@ -195,7 +195,7 @@ class ZoteroAnnotationsNotes:
     def format_items(self, annots: List[Dict]) -> List[ZoteroItem]:
         formatted_annots = []
         print(
-            f"Start formatting {len(annots)} annotations/notes...\n"
+            f"ZOTERO: Start formatting {len(annots)} annotations/notes...\n"
             f"It may take some time depending on the number of annotations...\n"
             f"A complete message will show up once it's done!\n"
         )
@@ -206,10 +206,10 @@ class ZoteroAnnotationsNotes:
                 self.failed_items.append(annot)
                 continue
 
-        finished_msg = "\nFormatting job is done!!\n"
+        finished_msg = "\nZOTERO: Formatting Zotero Items is completed!!\n\n"
         if self.failed_items:
             finished_msg += (
-                f"NOTE: {len(self.failed_items)} annotations/notes (out of {len(annots)}) failed to format.\n"
+                f"\nNOTE: {len(self.failed_items)} Zotero annotations/notes (out of {len(annots)}) failed to format.\n"
                 f"You can run `save_failed_items_to_json()` class method to save those items."
             )
         print(finished_msg)
@@ -223,10 +223,7 @@ class ZoteroAnnotationsNotes:
             out_filepath = FAILED_ITEMS_DIR.joinpath("failed_zotero_items.json")
         with open(out_filepath, "w") as f:
             dump(self.failed_items, f)
-        print(
-            f"{len(self.failed_items)} annotations/notes failed to format.\n"
-            f"Detail of failed items are saved into {out_filepath}"
-        )
+        print(f"\nZOTERO: Detail of failed items are saved into {out_filepath}\n")
 
 
 def retrieve_all_annotations(zotero_client: Zotero) -> List[Dict]:
