@@ -53,4 +53,4 @@ if __name__ == "__main__":
         include_annotations=args["include_annotations"],
         include_notes=args["include_notes"],
     )
-    zt2rw.run_all()
+    zt2rw.run()
