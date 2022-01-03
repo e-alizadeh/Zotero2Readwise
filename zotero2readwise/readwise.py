@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Union
 import requests
 
 from zotero2readwise import FAILED_ITEMS_DIR
+from zotero2readwise.exception import Zotero2ReadwiseError
 from zotero2readwise.helper import sanitize_tag
 from zotero2readwise.zotero import ZoteroItem
 
@@ -57,11 +58,22 @@ class Readwise:
         self.failed_highlights: List = []
 
     def create_highlights(self, highlights: List[Dict]) -> None:
-        requests.post(
+        resp = requests.post(
             url=self.endpoints.highlights,
             headers=self._header,
             json={"highlights": highlights},
         )
+        if resp.status_code != 200:
+            error_log_file = (
+                f"error_log_{resp.status_code}_failed_post_request_to_readwise.json"
+            )
+            with open(error_log_file, "w") as f:
+                dump(resp.json(), f)
+            raise Zotero2ReadwiseError(
+                f"Uploading to Readwise failed with following details:\n"
+                f"POST request Status Code={resp.status_code} ({resp.reason})\n"
+                f"Error log is saved to {error_log_file} file."
+            )
 
     @staticmethod
     def convert_tags_to_readwise_format(tags: List[str]) -> str:
@@ -106,29 +118,38 @@ class Readwise:
         self, zotero_annotations: List[ZoteroItem]
     ) -> None:
         print(
-            f"Start formatting {len(zotero_annotations)} annotations/notes...\n"
+            f"\nReadwise: Push {len(zotero_annotations)} Zotero annotations/notes to Readwise...\n"
             f"It may take some time depending on the number of highlights...\n"
             f"A complete message will show up once it's done!\n"
         )
         rw_highlights = []
         for annot in zotero_annotations:
             try:
+                if len(annot.text) >= 8191:
+                    print(
+                        f"A Zotero annotation from an item with {annot.title} (item_key={annot.key} and "
+                        f"version={annot.version}) cannot be uploaded since the highlight/note is very long. "
+                        f"A Readwise highlight can be up to 8191 characters."
+                    )
+                    self.failed_highlights.append(annot.get_nonempty_params())
+                    continue  # Go to next annot
                 rw_highlight = self.convert_zotero_annotation_to_readwise_highlight(
                     annot
                 )
             except:
-                self.failed_highlights.append(annot)
-                continue
+                self.failed_highlights.append(annot.get_nonempty_params())
+                continue  # Go to next annot
             rw_highlights.append(rw_highlight.get_nonempty_params())
-
         self.create_highlights(rw_highlights)
 
-        finished_msg = f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n"
+        finished_msg = ""
         if self.failed_highlights:
-            finished_msg += (
-                f"NOTE: {len(self.failed_highlights)} highlights (out of {len(self.failed_highlights)}) failed.\n"
-                f"You can run `save_failed_items_to_json()` class method to save those items."
+            finished_msg = (
+                f"\nNOTE: {len(self.failed_highlights)} highlights (out of {len(self.failed_highlights)}) failed "
+                f"to upload to Readwise.\n"
             )
+
+        finished_msg += f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n\n"
         print(finished_msg)
 
     def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
