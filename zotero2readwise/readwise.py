@@ -132,12 +132,13 @@ class Readwise:
                         f"A Readwise highlight can be up to 8191 characters."
                     )
                     self.failed_highlights.append(annot)
+                    continue  # Go to next annot
                 rw_highlight = self.convert_zotero_annotation_to_readwise_highlight(
                     annot
                 )
             except:
                 self.failed_highlights.append(annot)
-                continue
+                continue  # Go to next annot
             rw_highlights.append(rw_highlight.get_nonempty_params())
         self.create_highlights(rw_highlights)
 
