@@ -47,7 +47,14 @@ Since we have to retrieve the notes from Zotero API and then upload them to the 
 
 Note that if you want to retrieve annotations and notes from a group, you should provide the group ID (`zotero_library_id=<group_id>`) and set the library type to group (`zotero_library_type="group"`).
 
-## Approach 1 (through python terminal)
+## Approach 1 (running a python script)
+For this approach you can download `run.py` script (from [here](https://github.com/e-alizadeh/Zotero2Readwise/blob/master/zotero2readwise/run.py)). Run `python run.py -h` to get more information about all options. 
+You can simply run the script as the following:
+```shell
+python run.py <readwise_token> <zotero_key> <zotero_id> 
+```
+
+## Approach 2 (through python terminal)
 ```python 
 from zotero2readwise.zt2rw import Zotero2Readwise
 
@@ -67,13 +74,6 @@ If a file or more failed to create, the filename (item title) and the correspond
 item key will be saved to a txt file. 
 ```python
 zt_rw.readwise.save_failed_items_to_json("failed_readwise_highlights.json")
-```
-
-## Approach 2 (running a python script)
-For this approach you can download `run.py` script (from [here](https://github.com/e-alizadeh/Zotero2Readwise/blob/master/zotero2readwise/run.py)). Run `python run.py -h` to get more information about all options. 
-You can simply run the script as the following:
-```shell
-python run.py <readwise_token> <zotero_key> <zotero_id> 
 ```
 
 # Request a new feature or report a bug
