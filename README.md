@@ -22,8 +22,6 @@ you to export all your highlights to Obsidian, Notion, Roam, Markdown, etc.
 Moreover, It has an automated [Spaced Repition](https://en.wikipedia.org/wiki/Spaced_repetition) and [Active Recall](https://en.wikipedia.org/wiki/Testing_effect). You can use the the link [here](https://readwise.io/i/essi) to get an extra free month (*Disclaimer: I will get a free month too!*)
 
 ---
-
-
 # Installation 
 You can install the library by running 
 ```shell
@@ -75,6 +73,16 @@ You can simply run the script as the following:
 ```shell
 python run.py <readwise_token> <zotero_key> <zotero_id> 
 ```
+
+---
+# [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob): Set up a scheduled automation 
+### 👉 Set it up once and forget about it!
+
+You can fork my repo [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob) repository that contain 
+the cronjob (time-based Job scheduler) using GitHub actions to automatically retrieve all your Zotero annotations/notes, 
+and then push them to Readwise. 
+You can use the forked repo without even changing a single line (of course if you're happy with the default settings!)
+---
 
 # Request a new feature or report a bug
 Feel free to request a new feature or report a bug in GitHub issue [here](https://github.com/e-alizadeh/Zotero2MD/issues).
