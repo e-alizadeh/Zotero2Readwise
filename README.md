@@ -75,6 +75,15 @@ item key will be saved to a txt file.
 ```python
 zt_rw.readwise.save_failed_items_to_json("failed_readwise_highlights.json")
 ```
+---
+# [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob): Set up a scheduled automation 
+### 👉 Set it up once and forget about it!
+
+You can fork my repo [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob) repository that contain 
+the cronjob (time-based Job scheduler) using GitHub actions to automatically retrieve all your Zotero annotations/notes, 
+and then push them to Readwise. 
+You can use the forked repo without even changing a single line (of course if you're happy with the default settings!)
+---
 
 # Request a new feature or report a bug
 Feel free to request a new feature or report a bug in GitHub issue [here](https://github.com/e-alizadeh/Zotero2MD/issues).
