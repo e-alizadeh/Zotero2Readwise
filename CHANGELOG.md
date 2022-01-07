@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.3 (2022-01-07)
+### Fix
+* Use alternate link Zotero (`https://www.zotero.org/username/items/<itemKey>`) that has a html content instead of self link (`https://api.zotero.org/users/<userID>/items/<itemKey>`) that contains a JSON content and calls the API. ([`3310ad1`](https://github.com/e-alizadeh/Zotero2Readwise/commit/3310ad130afdcc977a8eb771712950d0d70064d1))
+
 ## v0.2.2 (2022-01-03)
 ### Fix
 * An oversight in `Zotero2Readwise` class method `run()` (previously `run_all())` ([`e2b1336`](https://github.com/e-alizadeh/Zotero2Readwise/commit/e2b133634372b44cefc728923ae7ef384c69adda))
