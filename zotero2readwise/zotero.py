@@ -178,7 +178,7 @@ class ZoteroAnnotationsNotes:
             item_type=item_type,
             text=text,
             annotated_at=data["dateModified"],
-            annotation_url=annot["links"]["self"]["href"],
+            annotation_url=annot["links"]["alternate"]["href"],
             comment=comment,
             title=metadata["title"],
             tags=data["tags"],

@@ -19,7 +19,7 @@ If you annotate your files outside the new Zotero PDF reader, this library may n
 § Readwise is a _paid_ service/software that integrates your highlights from almost everywhere (Pocket, Instapaper, Twitter, Medium, Apple Books, and many more). 
 It even has an amazing OCR for directly importing your highlights on a physical book/article into Readwise and allowing 
 you to export all your highlights to Obsidian, Notion, Roam, Markdown, etc. 
-Moreover, It has an automated [Spaced Repition](https://en.wikipedia.org/wiki/Spaced_repetition) and [Active Recall](https://en.wikipedia.org/wiki/Testing_effect). You can use the the link [here](https://readwise.io/i/essi) to get an extra free month (*Disclaimer: I will get a free month too!*)
+Moreover, It has an automated [Spaced Repition](https://en.wikipedia.org/wiki/Spaced_repetition) and [Active Recall](https://en.wikipedia.org/wiki/Testing_effect). 
 
 ---
 
@@ -47,7 +47,14 @@ Since we have to retrieve the notes from Zotero API and then upload them to the 
 
 Note that if you want to retrieve annotations and notes from a group, you should provide the group ID (`zotero_library_id=<group_id>`) and set the library type to group (`zotero_library_type="group"`).
 
-## Approach 1 (Recommended)
+## Approach 1 (running a python script)
+For this approach you can download `run.py` script (from [here](https://github.com/e-alizadeh/Zotero2Readwise/blob/master/zotero2readwise/run.py)). Run `python run.py -h` to get more information about all options. 
+You can simply run the script as the following:
+```shell
+python run.py <readwise_token> <zotero_key> <zotero_id> 
+```
+
+## Approach 2 (through python terminal)
 ```python 
 from zotero2readwise.zt2rw import Zotero2Readwise
 
@@ -68,13 +75,15 @@ item key will be saved to a txt file.
 ```python
 zt_rw.readwise.save_failed_items_to_json("failed_readwise_highlights.json")
 ```
+---
+# [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob): Set up a scheduled automation 
+### 👉 Set it up once and forget about it!
 
-## Approach 2
-You can use the `run.py` script. Run `python run.py -h` to get more information about all options. 
-You can simply run the script as the following:
-```shell
-python run.py <readwise_token> <zotero_key> <zotero_id> 
-```
+You can fork my repo [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob) repository that contain 
+the cronjob (time-based Job scheduler) using GitHub actions to automatically retrieve all your Zotero annotations/notes, 
+and then push them to Readwise. 
+You can use the forked repo without even changing a single line (of course if you're happy with the default settings!)
+---
 
 # Request a new feature or report a bug
 Feel free to request a new feature or report a bug in GitHub issue [here](https://github.com/e-alizadeh/Zotero2MD/issues).
