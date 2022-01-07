@@ -83,7 +83,6 @@ You can fork my repo [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob
 the cronjob (time-based Job scheduler) using GitHub actions to automatically retrieve all your Zotero annotations/notes, 
 and then push them to Readwise. 
 You can use the forked repo without even changing a single line (of course if you're happy with the default settings!)
----
 
 # Request a new feature or report a bug
 Feel free to request a new feature or report a bug in GitHub issue [here](https://github.com/e-alizadeh/Zotero2MD/issues).
