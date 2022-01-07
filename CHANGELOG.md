@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.2 (2022-01-03)
+### Fix
+* An oversight in `Zotero2Readwise` class method `run()` (previously `run_all())` ([`e2b1336`](https://github.com/e-alizadeh/Zotero2Readwise/commit/e2b133634372b44cefc728923ae7ef384c69adda))
+
 ## v0.2.1 (2022-01-03)
 ### Fix
 * Get non-empty objects from ZoteroItem (so that we have a JSON serializable object) ([`6b79fc9`](https://github.com/e-alizadeh/Zotero2Readwise/commit/6b79fc9bf457acd78287a8f0cbe1800f335e52fc))
