@@ -1,7 +1,7 @@
 # Zotero ➡️ Readwise
 
 `zotero2readwise` is a Python library that retrieves all [Zotero](https://www.zotero.org/) annotations† and notes. 
-Then, It automatically uploads them to your [Readwise](https://readwise.io/)§§. 
+Then, It automatically uploads them to your [Readwise](https://readwise.io/)§. 
 
 This is particularly useful for the new [Zotero PDF Reader](https://www.zotero.org/support/pdf_reader_preview) 
 that stores all highlights in the Zotero database. 
