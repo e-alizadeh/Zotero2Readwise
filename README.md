@@ -76,7 +76,7 @@ item key will be saved to a txt file.
 zt_rw.readwise.save_failed_items_to_json("failed_readwise_highlights.json")
 ```
 ---
-# [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync): 
+# [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync)
 
 ### 👉 Set up a scheduled automation once and forget about it!
 
