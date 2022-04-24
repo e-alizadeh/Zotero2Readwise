@@ -33,7 +33,7 @@ class ReadwiseHighlight:
     title: Optional[str] = None
     author: Optional[str] = None
     image_url: Optional[str] = None
-    source_url: Optional[str] = Category.articles.name
+    source_url: Optional[str] = None
     source_type: Optional[str] = None
     category: Optional[str] = None
     note: Optional[str] = None

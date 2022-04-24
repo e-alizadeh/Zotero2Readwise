@@ -1,7 +1,7 @@
 # Zotero ➡️ Readwise
 
 `zotero2readwise` is a Python library that retrieves all [Zotero](https://www.zotero.org/) annotations† and notes. 
-Then, It automatically uploads them to your [Readwise](https://readwise.io/)§§. 
+Then, It automatically uploads them to your [Readwise](https://readwise.io/)§. 
 
 This is particularly useful for the new [Zotero PDF Reader](https://www.zotero.org/support/pdf_reader_preview) 
 that stores all highlights in the Zotero database. 
@@ -76,17 +76,17 @@ item key will be saved to a txt file.
 zt_rw.readwise.save_failed_items_to_json("failed_readwise_highlights.json")
 ```
 ---
-# [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob): Set up a scheduled automation 
-### 👉 Set it up once and forget about it!
+# [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync)
 
-You can fork my repo [zt2rw-cronjob](https://github.com/e-alizadeh/zt2rw-cronjob) repository that contain 
+### 👉 Set up a scheduled automation once and forget about it!
+
+You can fork my repo [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync) repository that contain 
 the cronjob (time-based Job scheduler) using GitHub actions to automatically retrieve all your Zotero annotations/notes, 
 and then push them to Readwise. 
 You can use the forked repo without even changing a single line (of course if you're happy with the default settings!)
----
 
 # Request a new feature or report a bug
-Feel free to request a new feature or report a bug in GitHub issue [here](https://github.com/e-alizadeh/Zotero2MD/issues).
+Feel free to request a new feature or report a bug in GitHub issue [here](https://github.com/e-alizadeh/Zotero2Readwise/issues).
 
 
 # 📫 How to reach me:

@@ -37,7 +37,7 @@ Pyzotero = "^1.4.26"
 requests = "^2.26.0"
 
 [tool.poetry.dev-dependencies]
-ipython = "^7.30.1"
+ipython = "^7.32.0"
 pre-commit = "^2.16.0"
 ipdb = "^0.13.9"
 
