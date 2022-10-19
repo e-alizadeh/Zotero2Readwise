@@ -136,7 +136,7 @@ class ZoteroAnnotationsNotes:
             # "date": data["date"],
             "tags": data["tags"],
             "document_type": data["itemType"],
-            "source_url": top_item["links"]["self"]["href"],
+            "source_url": top_item["links"]["alternate"]["href"],
         }
         if "creators" in data:
             metadata["creators"] = [
