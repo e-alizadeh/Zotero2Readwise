@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.5 (2022-10-19)
+### Fix
+* Merge pull request #28 from stefanku/master ([`ea16ffa`](https://github.com/e-alizadeh/Zotero2Readwise/commit/ea16ffaf1c911b693095e68773771a7ac408fc4f))
+
 ## v0.2.4 (2022-04-24)
 ### Fix
 * Update iPython to resolve a security bug. ([`12b1908`](https://github.com/e-alizadeh/Zotero2Readwise/commit/12b19084154e4ecaebd5d5e3d05d6fd0c68b0996))
