@@ -4,7 +4,7 @@
 
 ## v0.2.6 (2022-10-31)
 ### Fix
-* Merge pull request #32 from e-alizadeh/better-logging ([`0788e4c`](https://github.com/e-alizadeh/Zotero2Readwise/commit/0788e4cb36c4049eb9f51c8642a9d87cbae82e3d)
+* Merge pull request #32 from e-alizadeh/better-logging ([`0788e4c`](https://github.com/e-alizadeh/Zotero2Readwise/commit/0788e4cb36c4049eb9f51c8642a9d87cbae82e3d))
 
 ## v0.2.5 (2022-10-19)
 ### Fix
