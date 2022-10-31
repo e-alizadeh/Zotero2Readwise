@@ -19,7 +19,6 @@ class Zotero2Readwise:
         include_annotations: bool = True,
         include_notes: bool = False,
     ):
-
         self.readwise = Readwise(readwise_token)
         self.zotero_client = get_zotero_client(
             library_id=zotero_library_id,
@@ -34,16 +33,21 @@ class Zotero2Readwise:
         annots, notes = [], []
         if self.include_annots:
             annots = retrieve_all_annotations(self.zotero_client)
+
         if self.include_notes:
             notes = retrieve_all_notes(self.zotero_client)
+
         all_zotero_items = annots + notes
         print(f"{len(all_zotero_items)} Zotero items are retrieved.")
+
         return all_zotero_items
 
     def run(self, zot_annots_notes: List[Dict] = None) -> None:
         if zot_annots_notes is None:
             zot_annots_notes = self.get_all_zotero_items()
+
         formatted_items = self.zotero.format_items(zot_annots_notes)
+
         if self.zotero.failed_items:
             self.zotero.save_failed_items_to_json("failed_zotero_items.json")
 
