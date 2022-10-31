@@ -221,8 +221,9 @@ class ZoteroAnnotationsNotes:
             out_filepath = FAILED_ITEMS_DIR.joinpath(json_filepath_failed_items)
         else:
             out_filepath = FAILED_ITEMS_DIR.joinpath("failed_zotero_items.json")
+
         with open(out_filepath, "w") as f:
-            dump(self.failed_items, f)
+            dump(self.failed_items, f, indent=4)
         print(f"\nZOTERO: Detail of failed items are saved into {out_filepath}\n")
 
 
