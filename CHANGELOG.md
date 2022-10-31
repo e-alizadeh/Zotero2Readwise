@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.6 (2022-10-31)
+### Fix
+* Adding spaces ([`e73352d`](https://github.com/e-alizadeh/Zotero2Readwise/commit/e73352d7ca7de9aa60c22958e2ce55ff35ba26e7))
+* Empty commit for new release ([`7fa1b2b`](https://github.com/e-alizadeh/Zotero2Readwise/commit/7fa1b2beca4d41b5dfdabc753766cf82a9eaccba))
+* Empty commit for new release ([`c1038c3`](https://github.com/e-alizadeh/Zotero2Readwise/commit/c1038c34a4880373b60254161df734443ed9c049))
+* Empty commit for new release ([`65e2f44`](https://github.com/e-alizadeh/Zotero2Readwise/commit/65e2f444dfab59dd6704404d18e9742d0d591a4d))
+
 ## v0.2.5 (2022-10-19)
 ### Fix
 * Merge pull request #28 from stefanku/master ([`ea16ffa`](https://github.com/e-alizadeh/Zotero2Readwise/commit/ea16ffaf1c911b693095e68773771a7ac408fc4f))
