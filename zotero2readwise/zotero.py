@@ -25,6 +25,7 @@ class ZoteroItem:
     annotation_type: Optional[str] = None
     creators: Optional[str] = field(init=True, default=None)
     source_url: Optional[str] = None
+    attachment_url: Optional[str] = None
     page_label: Optional[str] = None
     color: Optional[str] = None
     relations: Optional[Dict] = field(init=True, default=None)
@@ -111,7 +112,7 @@ class ZoteroAnnotationsNotes:
         data = annot["data"]
         # A Zotero annotation or note must have a parent with parentItem key.
         parent_item_key = data["parentItem"]
-
+        
         if parent_item_key in self._parent_mapping:
             top_item_key = self._parent_mapping[parent_item_key]
             if top_item_key in self._cache:
@@ -136,13 +137,15 @@ class ZoteroAnnotationsNotes:
             # "date": data["date"],
             "tags": data["tags"],
             "document_type": data["itemType"],
-            "source_url": top_item["links"]["alternate"]["href"],
+            "source_url": top_item["links"]["alternate"]["href"]
         }
         if "creators" in data:
             metadata["creators"] = [
                 creator["firstName"] + " " + creator["lastName"]
                 for creator in data["creators"]
             ]
+        if "attachment" in top_item["links"] and top_item["links"]["attachment"]["attachmentType"] == "application/pdf":
+            metadata["attachment_url"] = top_item["links"]["attachment"]["href"]
 
         self._cache[top_item_key] = metadata
         return metadata
@@ -179,6 +182,7 @@ class ZoteroAnnotationsNotes:
             text=text,
             annotated_at=data["dateModified"],
             annotation_url=annot["links"]["alternate"]["href"],
+            attachment_url=metadata["attachment_url"],
             comment=comment,
             title=metadata["title"],
             tags=data["tags"],
