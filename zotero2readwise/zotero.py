@@ -102,11 +102,12 @@ def get_zotero_client(
 
 
 class ZoteroAnnotationsNotes:
-    def __init__(self, zotero_client: Zotero):
+    def __init__(self, zotero_client: Zotero, filter_colors: List[str]):
         self.zot = zotero_client
         self.failed_items: List[Dict] = []
         self._cache: Dict = {}
         self._parent_mapping: Dict = {}
+        self.filter_colors: List[str] = filter_colors
 
     def get_item_metadata(self, annot: Dict) -> Dict:
         data = annot["data"]
@@ -205,7 +206,8 @@ class ZoteroAnnotationsNotes:
         )
         for annot in annots:
             try:
-                formatted_annots.append(self.format_item(annot))
+                if len(self.filter_colors) == 0 or annot["data"]["annotationColor"] in self.filter_colors:
+                    formatted_annots.append(self.format_item(annot))
             except:
                 self.failed_items.append(annot)
                 continue
