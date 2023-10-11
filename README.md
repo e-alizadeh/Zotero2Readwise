@@ -38,7 +38,7 @@ Since we have to retrieve the notes from Zotero API and then upload them to the 
 * **Readwise access token** [Required]: You can get your access token from https://readwise.io/access_token
 * **Zotero API key** [Required]: Create a new Zotero Key from [your Zotero settings](https://www.zotero.org/settings/keys/new)
 * **Zotero personal or group ID** [Required]: 
-    * Your **personal library ID** (aka **userID**) can be found [here](https://www.zotero.org/settings/key) next to `Your userID for use in API calls is XXXXXX`.
+    * Your **personal library ID** (aka **userID**) can be found [here](https://www.zotero.org/settings/keys) next to `Your userID for use in API calls is XXXXXX`.
     * If you're using a **group library**, you can find the library ID by 
         1. Go to `https://www.zotero.org/groups/`
         2. Click on the interested group.
