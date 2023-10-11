@@ -99,7 +99,11 @@ class Readwise:
             location = int(annot.page_label)
         else:
             location = 0
-
+        highlight_url = None
+        if annot.attachment_url is not None:
+            attachment_id = annot.attachment_url.split("/")[-1]
+            annot_id = annot.annotation_url.split("/")[-1]
+            highlight_url = f'zotero://open-pdf/library/items/{attachment_id}?page={location}%&annotation={annot_id}'
         return ReadwiseHighlight(
             text=annot.text,
             title=annot.title,
@@ -110,7 +114,9 @@ class Readwise:
             else Category.books.name,
             highlighted_at=annot.annotated_at,
             source_url=annot.source_url,
-            highlight_url=annot.annotation_url,
+            highlight_url=annot.annotation_url
+            if highlight_url is None
+            else highlight_url,
             location=location,
         )
 
