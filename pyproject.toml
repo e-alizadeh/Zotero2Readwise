@@ -26,7 +26,7 @@ version_variable = [
     "zotero2readwise/__init__.py:__version__",
     "pyproject.toml:version"
 ]
-branch = "release"
+branch = "master"
 upload_to_repository = true
 upload_to_release = true
 build_command = "pip install poetry && poetry build"

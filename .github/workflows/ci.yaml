@@ -59,7 +59,7 @@ jobs:
   Release:
 #    needs: Test
     runs-on: ubuntu-latest
-    if:  github.ref_name == 'release'
+    if:  github.ref_name == 'master'
 
     steps:
       - name: 📥 Checkout repo
