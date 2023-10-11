@@ -59,7 +59,7 @@ jobs:
   Release:
 #    needs: Test
     runs-on: ubuntu-latest
-    if:  github.ref_name == 'release'
+    if:  github.ref_name == 'master'
 
     steps:
       - name: 📥 Checkout repo
@@ -73,7 +73,7 @@ jobs:
           python-version: 3.8
 
       - name: 📤 Publish Package (via Semantic Release)
-        uses: relekang/python-semantic-release@v7.32.2
+        uses: python-semantic-release/python-semantic-release@v7.33.5
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           repository_username: __token__
