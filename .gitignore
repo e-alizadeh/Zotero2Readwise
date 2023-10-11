@@ -5,6 +5,7 @@ __pycache__/
 *.json
 *.env
 *.DS_Store
+.tool-versions
 # C extensions
 *.so
 
