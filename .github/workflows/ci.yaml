@@ -73,7 +73,7 @@ jobs:
           python-version: 3.8
 
       - name: 📤 Publish Package (via Semantic Release)
-        uses: relekang/python-semantic-release@master
+        uses: relekang/python-semantic-release@v7.32.2
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           repository_username: __token__
