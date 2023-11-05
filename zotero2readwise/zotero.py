@@ -42,6 +42,8 @@ class ZoteroItem:
         if self.relations:
             self.relations = self.relations.get("dc:relation")
 
+        if len(self.creators) > 3:
+            self.creators = self.creators[:3] + ["et al."]
         self.creators = ", ".join(self.creators) if self.creators else None
 
     def get_nonempty_params(self) -> Dict:
