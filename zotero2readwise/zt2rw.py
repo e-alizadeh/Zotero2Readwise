@@ -18,7 +18,8 @@ class Zotero2Readwise:
         zotero_library_type: str = "user",
         include_annotations: bool = True,
         include_notes: bool = False,
-        filter_colors: List[str] = []
+        filter_colors: List[str] = [],
+        since: int = 0
     ):
         self.readwise = Readwise(readwise_token)
         self.zotero_client = get_zotero_client(
@@ -29,6 +30,7 @@ class Zotero2Readwise:
         self.zotero = ZoteroAnnotationsNotes(self.zotero_client, filter_colors)
         self.include_annots = include_annotations
         self.include_notes = include_notes
+        self.since = since
 
     def get_all_zotero_items(self) -> List[Dict]:
         annots, notes = [], []
