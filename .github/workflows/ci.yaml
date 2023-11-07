@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
-    if:  github.ref_name == 'master'
+    if:  github.ref_name == 'fix/github-action-pkg-release'
 
     steps:
       - name: 📥 Checkout repo
