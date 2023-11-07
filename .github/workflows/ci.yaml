@@ -25,12 +25,12 @@ jobs:
         with:
           python-version: '3.8'
       
-      - name: Install Poetry
+      - name: 💻 Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Configure Poetry
+      - name: ⚙️ Configure Poetry
         run: |
           poetry config virtualenvs.create false
           poetry config virtualenvs.in-project false
@@ -38,20 +38,20 @@ jobs:
       - name: Install dependencies with Poetry
         run: poetry install --no-root
 
-      - name: Python Semantic Release
+      - name: 🐍 Python Semantic Release
         id: release
         uses: python-semantic-release/python-semantic-release@v8.3.0
         with:
           github_token: ${{ secrets.GH_TOKEN }}
       
-      - name: Debug Semantic Release Output
+      - name: 🔍 Print Semantic Release Output (for Debugging purposes)
         if: always()
         run: |
           echo "Released: ${{ steps.release.outputs.released }}"
           echo "New version: ${{ steps.release.outputs.new_version }}"
           echo "Version change: ${{ steps.release.outputs.version_change }}"
 
-      - name: Build distributions with Poetry
+      - name: 🛠️ Build distributions with Poetry
         run: poetry build
         if: steps.release.outputs.released == 'true'
 
