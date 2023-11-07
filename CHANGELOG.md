@@ -2,6 +2,19 @@
 
 
 
+## v0.3.3 (2023-11-07)
+
+### Fix
+
+* fix: use more distinct step id for GHA step ([`5d30a25`](https://github.com/e-alizadeh/Zotero2Readwise/commit/5d30a2536c5046e4f175507fd5d68a86d1f2c264))
+
+### Unknown
+
+* Merge pull request #63 from e-alizadeh:fix/semantic-release
+
+fix: use more distinct step id for GHA step ([`9602a0f`](https://github.com/e-alizadeh/Zotero2Readwise/commit/9602a0fabe88e574d33c0ec69cafc3fb23914f6d))
+
+
 ## v0.3.2 (2023-11-07)
 
 ### Fix
