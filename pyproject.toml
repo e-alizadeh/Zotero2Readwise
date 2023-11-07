@@ -26,10 +26,9 @@ version_variable = [
     "zotero2readwise/__init__.py:__version__",
     "pyproject.toml:version"
 ]
-branch = "master"
-upload_to_repository = true
-upload_to_release = true
-build_command = "pip install poetry && poetry build"
+
+[tool.semantic_release.remote.token]
+env = "GH_TOKEN" # default env name containing the GitHub Token 
 
 [tool.poetry.dependencies]
 python = "^3.8"
