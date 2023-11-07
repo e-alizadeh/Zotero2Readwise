@@ -4,9 +4,6 @@ on:
     branches:
       - master
       - release
-      - 'fix/github-action-pkg-release'
-#      - 'feature/*'
-#      - 'bugfix/*'
     paths-ignore:
       - '**.md'
 jobs:
