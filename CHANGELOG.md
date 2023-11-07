@@ -2,7 +2,28 @@
 
 
 
-## v0.3.1 (2023-11-06)
+## v0.3.2 (2023-11-07)
+
+### Fix
+
+* fix: minor changes to release a new pkg after merging ([`7b94b33`](https://github.com/e-alizadeh/Zotero2Readwise/commit/7b94b33e97d7ee6481fb357006c818504f6da2e4))
+
+### Refactor
+
+* refactor: remove unrelated branches ([`767c598`](https://github.com/e-alizadeh/Zotero2Readwise/commit/767c598c4e1dc6ba72aa604cb59ca3085a86aaea))
+
+### Unknown
+
+* Merge pull request #62 from e-alizadeh/new-release
+
+fix: minor changes to release a new pkg after merging ([`4944d94`](https://github.com/e-alizadeh/Zotero2Readwise/commit/4944d941c654a9f3d7e99b657f8b80a74c4d3ee3))
+
+* Merge pull request #61 from e-alizadeh/fix/github-action-pkg-release
+
+Fix/GitHub action pkg release ([`c89e8c1`](https://github.com/e-alizadeh/Zotero2Readwise/commit/c89e8c14c74fad1d6d7aaf4af17ed30bc6120af2))
+
+
+## v0.3.1 (2023-11-07)
 
 ### Fix
 
