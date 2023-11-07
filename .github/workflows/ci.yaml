@@ -10,45 +10,56 @@ on:
     paths-ignore:
       - '**.md'
 jobs:
-  Build:
+  release:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8]
-    if:  github.ref_name == 'fix/github-action-pkg-release'
+    concurrency: release
+    permissions:
+      id-token: write
+      contents: write
 
     steps:
       - name: 📥 Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: 🐍  Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+      - name: 🐍  Setup Python 3.8
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.8'
       
-      - name: Install dependencies
+      - name: Install Poetry
         run: |
-          python -m pip install --upgrade pip
-          pip install build
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Build wheel and source distribution
+      - name: Configure Poetry
         run: |
-          python -m build --sdist --wheel --outdir dist/
+          poetry config virtualenvs.create false
+          poetry config virtualenvs.in-project false
 
-      - name: Publish to PyPI
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: pypa/gh-action-pypi-publish@v1.8.10
+      - name: Install dependencies with Poetry
+        run: poetry install --no-root
+
+      - name: Python Semantic Release
+        id: release
+        uses: python-semantic-release/python-semantic-release@v8.3.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Build distributions with Poetry
+        run: poetry build
+        if: steps.release.outputs.released == 'true'
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        if: steps.release.outputs.released == 'true'
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
-          packages_dir: dist
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+      
+      - name: Publish package distributions to GitHub Releases
+        uses: python-semantic-release/upload-to-gh-release@main
+        if: steps.release.outputs.released == 'true'
         with:
-          files: dist/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN }}
