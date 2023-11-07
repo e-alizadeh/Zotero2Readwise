@@ -4,77 +4,51 @@ on:
     branches:
       - master
       - release
+      - 'fix/github-action-pkg-release'
 #      - 'feature/*'
 #      - 'bugfix/*'
     paths-ignore:
       - '**.md'
 jobs:
-#  Test:
-#    runs-on: ubuntu-latest
-#    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-#    defaults:
-#      run:
-#        shell: bash -l {0}
-#
-#    steps:
-#      - name: 📥 Checkout repo
-#        uses: actions/checkout@v2
-#        with:
-#          fetch-depth: 0
-#
-#      - name: 🐍  Setup Python
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: 3.8
-#
-#      - name: 🟢 Create Conda environment using Mambaforge
-#        uses: conda-incubator/setup-miniconda@v2
-#        with:
-#          miniforge-variant: Mambaforge
-#          activate-environment: zt2md
-#          environment-file: dev-env.yaml
-#          auto-activate-base: false
-#          use-mamba: true
-#
-#      - name: 📅 Set cache date
-#        run: echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
-#
-#      - name: 🗄️ Set up Cache for conda environment
-#        uses: actions/cache@v2
-#        with:
-#          path: /usr/share/miniconda3/envs/zt2md
-#          key: linux-64-conda-${{ hashFiles('dev-env.yml') }}-${{ env.DATE }}-${{ env.CACHE_NUMBER }}
-#        id: cache
-#
-#      - name: 🐍 Setup Poetry
-#        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
-#
-#      - name: ⚙ Install PyPi packages via Poetry
-#        run: poetry install
-#        if: steps.cache.outputs.cache-hit != 'true'
-#
-#      - name: 🕵️ Run pytest
-#        run: pytest --cov-report xml:coverage.xml
-
-  Release:
-#    needs: Test
+  Build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
     if:  github.ref_name == 'master'
 
     steps:
       - name: 📥 Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 🐍  Setup Python
-        uses: actions/setup-python@v2
+      - name: 🐍  Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
 
-      - name: 📤 Publish Package (via Semantic Release)
-        uses: python-semantic-release/python-semantic-release@v7.32.2
+      - name: Build wheel and source distribution
+        run: |
+          python -m build --sdist --wheel --outdir dist/
+
+      - name: Publish to PyPI
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: pypa/gh-action-pypi-publish@v1.8.10
         with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          repository_username: __token__
-          repository_password: ${{ secrets.PYPI_TOKEN }}
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
+          packages_dir: dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
