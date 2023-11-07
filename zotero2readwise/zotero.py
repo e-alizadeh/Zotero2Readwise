@@ -41,10 +41,11 @@ class ZoteroItem:
         # Sample {'dc:relation': ['http://zotero.org/users/123/items/ABC', 'http://zotero.org/users/123/items/DEF']}
         if self.relations:
             self.relations = self.relations.get("dc:relation")
-
-        if len(self.creators) > 3:
-            self.creators = self.creators[:3] + ["et al."]
-        self.creators = ", ".join(self.creators) if self.creators else None
+        
+        if self.creators:
+            while ", ".join(self.creators) >= 1024 - len(", et al."):
+                self.creators = self.creators[:len(self.creators) - 1]
+            self.creators = ", ".join(self.creators) + ", et al."
 
     def get_nonempty_params(self) -> Dict:
         return {k: v for k, v in self.__dict__.items() if v}
