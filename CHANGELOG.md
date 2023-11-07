@@ -2,6 +2,19 @@
 
 
 
+## v0.3.4 (2023-11-07)
+
+### Fix
+
+* fix: versions and update GH Token secret ([`073a57d`](https://github.com/e-alizadeh/Zotero2Readwise/commit/073a57d4f62c6a36bb4907cedee6c52c237b84eb))
+
+### Unknown
+
+* Merge pull request #64 from e-alizadeh:update-gh-token
+
+fix: versions and update GH Token secret ([`b8c377c`](https://github.com/e-alizadeh/Zotero2Readwise/commit/b8c377c6e6b5cab1c53935b6dd6fa10a7b6c811f))
+
+
 ## v0.3.3 (2023-11-07)
 
 ### Fix
