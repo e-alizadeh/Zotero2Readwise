@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - release
     paths-ignore:
       - '**.md'
 jobs:
@@ -39,7 +38,7 @@ jobs:
         run: poetry install --no-root
 
       - name: 🐍 Python Semantic Release
-        id: release
+        id: srelease
         uses: python-semantic-release/python-semantic-release@v8.3.0
         with:
           github_token: ${{ secrets.GH_TOKEN }}
@@ -47,23 +46,23 @@ jobs:
       - name: 🔍 Print Semantic Release Output (for Debugging purposes)
         if: always()
         run: |
-          echo "Released: ${{ steps.release.outputs.released }}"
-          echo "New version: ${{ steps.release.outputs.new_version }}"
-          echo "Version change: ${{ steps.release.outputs.version_change }}"
+          echo "Released: ${{ steps.srelease.outputs.released }}"
+          echo "New version: ${{ steps.srelease.outputs.new_version }}"
+          echo "Version change: ${{ steps.srelease.outputs.version_change }}"
 
       - name: 🛠️ Build distributions with Poetry
         run: poetry build
-        if: steps.release.outputs.released == 'true'
+        if: steps.srelease.outputs.released == 'true'
 
       - name: 🚀 Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        if: steps.release.outputs.released == 'true'
+        if: steps.srelease.outputs.released == 'true'
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
       
       - name: 🚀 Publish to GitHub Releases
         uses: python-semantic-release/upload-to-gh-release@main
-        if: steps.release.outputs.released == 'true'
+        if: steps.srelease.outputs.released == 'true'
         with:
           github_token: ${{ secrets.GH_TOKEN }}
