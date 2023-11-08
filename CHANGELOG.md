@@ -2,6 +2,19 @@
 
 
 
+## v0.4.1 (2023-11-08)
+
+### Fix
+
+* fix(pyproject): version bump config ([`566989b`](https://github.com/e-alizadeh/Zotero2Readwise/commit/566989be781ba7a7062e500ada646918c6d2e60a))
+
+### Unknown
+
+* Merge pull request #65 from e-alizadeh/fix-semantic-release-bumpversion
+
+fix(pyproject): version bump config ([`04f1083`](https://github.com/e-alizadeh/Zotero2Readwise/commit/04f10837cd62417c3bff89fadd9c5cc1516374f2))
+
+
 ## v0.4.0 (2023-11-08)
 
 ### Unknown
