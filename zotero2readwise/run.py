@@ -3,6 +3,8 @@ from distutils.util import strtobool
 
 from zotero2readwise.zt2rw import Zotero2Readwise
 
+from helper import write_library_version, read_library_version
+
 if __name__ == "__main__":
     parser = ArgumentParser(description="Generate Markdown files")
     parser.add_argument(
@@ -40,6 +42,11 @@ if __name__ == "__main__":
         default=[],
         help="Filter Zotero annotations by given color | Options: '#ffd400' (yellow), '#ff6666' (red), '#5fb236' (green), '#2ea8e5' (blue), '#a28ae5' (purple), '#e56eee' (magenta), '#f19837' (orange), '#aaaaaa' (gray)"
     )
+    parser.add_argument(
+        "--use_since",
+        action='store_true',
+        help="Include Zotero items since last run"
+    )
 
     args = vars(parser.parse_args())
 
@@ -52,6 +59,7 @@ if __name__ == "__main__":
                 f"Invalid value for --{bool_arg}. Use 'n' or 'y' (default)."
             )
 
+    since = read_library_version() if args["use_since"] else 0
     zt2rw = Zotero2Readwise(
         readwise_token=args["readwise_token"],
         zotero_key=args["zotero_key"],
@@ -59,6 +67,9 @@ if __name__ == "__main__":
         zotero_library_type=args["library_type"],
         include_annotations=args["include_annotations"],
         include_notes=args["include_notes"],
-        filter_colors=args["filter_color"]
+        filter_colors=args["filter_color"],
+        since=since
     )
     zt2rw.run()
+    if args["use_since"]:
+        write_library_version(zt2rw.zotero_client)
