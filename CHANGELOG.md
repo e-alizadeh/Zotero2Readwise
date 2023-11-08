@@ -2,6 +2,15 @@
 
 
 
+## v0.4.0 (2023-11-08)
+
+### Unknown
+
+* Merge pull request #59 from noeleont/master
+
+Add --use_since feature flag ([`3e204d2`](https://github.com/e-alizadeh/Zotero2Readwise/commit/3e204d2863bc5aee64119fe4288af33715611245))
+
+
 ## v0.3.4 (2023-11-07)
 
 ### Fix
@@ -50,6 +59,19 @@ Fix/GitHub action pkg release ([`c89e8c1`](https://github.com/e-alizadeh/Zotero2
 
 
 ## v0.3.1 (2023-11-07)
+
+### Feature
+
+* feat(since): finish functionallity
+
+- get_all_zotero_items use since
+- refactor: retrieve_all_* to one function with item_type as parameter ([`349eaa6`](https://github.com/e-alizadeh/Zotero2Readwise/commit/349eaa6a6570e85ee6aea6121a8988f0c9d392e0))
+
+* feat(since): only sync since last sync
+
+Storing the last synchronization timestamp in a file allows for
+incremental syncing, efficiently updating only the new highlights
+since the last sync, ideal for large collections. ([`42b3449`](https://github.com/e-alizadeh/Zotero2Readwise/commit/42b3449d93f69f759c54a5bcb3ac82e18b463f19))
 
 ### Fix
 
