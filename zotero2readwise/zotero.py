@@ -43,9 +43,17 @@ class ZoteroItem:
             self.relations = self.relations.get("dc:relation")
         
         if self.creators:
-            while ", ".join(self.creators) >= 1024 - len(", et al."):
-                self.creators = self.creators[:len(self.creators) - 1]
-            self.creators = ", ".join(self.creators) + ", et al."
+            et_al = "et al."
+            max_length = 1024 - len(et_al)
+            creators_str = ", ".join(self.creators)
+            if creators_str > max_length:
+                # Reset creators_str and find the first n creators that fit in max_length
+                creators_str = ""
+                while self.creators and len(creators_str) < max_length:
+                    creators_str += self.creators.pop() + ", "
+                creators_str += et_al
+            self.creators = creators_str
+
 
     def get_nonempty_params(self) -> Dict:
         return {k: v for k, v in self.__dict__.items() if v}
