@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zotero2readwise"
-version = "0.2.7"
+version = "0.4.1"
 description = "Export your Zotero annotations and notes to Readwise"
 readme = "README.md"
 authors = ["ealizadeh <hello@ealizadeh.com>"]
@@ -22,14 +22,13 @@ classifiers = [
 ]
 
 [tool.semantic_release]
-version_variable = [
+version_variables = [
     "zotero2readwise/__init__.py:__version__",
     "pyproject.toml:version"
 ]
-branch = "master"
-upload_to_repository = true
-upload_to_release = true
-build_command = "pip install poetry && poetry build"
+
+[tool.semantic_release.remote.token]
+env = "GH_TOKEN" # default env name containing the GitHub Token 
 
 [tool.poetry.dependencies]
 python = "^3.8"
