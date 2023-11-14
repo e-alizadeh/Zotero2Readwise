@@ -46,7 +46,7 @@ class ZoteroItem:
             et_al = "et al."
             max_length = 1024 - len(et_al)
             creators_str = ", ".join(self.creators)
-            if creators_str > max_length:
+            if len(creators_str) > max_length:
                 # Reset creators_str and find the first n creators that fit in max_length
                 creators_str = ""
                 while self.creators and len(creators_str) < max_length:
