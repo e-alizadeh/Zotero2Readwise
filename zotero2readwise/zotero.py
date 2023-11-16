@@ -41,8 +41,19 @@ class ZoteroItem:
         # Sample {'dc:relation': ['http://zotero.org/users/123/items/ABC', 'http://zotero.org/users/123/items/DEF']}
         if self.relations:
             self.relations = self.relations.get("dc:relation")
+        
+        if self.creators:
+            et_al = "et al."
+            max_length = 1024 - len(et_al)
+            creators_str = ", ".join(self.creators)
+            if len(creators_str) > max_length:
+                # Reset creators_str and find the first n creators that fit in max_length
+                creators_str = ""
+                while self.creators and len(creators_str) < max_length:
+                    creators_str += self.creators.pop() + ", "
+                creators_str += et_al
+            self.creators = creators_str
 
-        self.creators = ", ".join(self.creators) if self.creators else None
 
     def get_nonempty_params(self) -> Dict:
         return {k: v for k, v in self.__dict__.items() if v}
