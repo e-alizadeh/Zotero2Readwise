@@ -2,6 +2,27 @@
 
 
 
+## v0.4.2 (2023-11-16)
+
+### Fix
+
+* fix: add `len` ([`59d3fad`](https://github.com/e-alizadeh/Zotero2Readwise/commit/59d3fadfe6a730deb86f76df486fcf54d3138aab))
+
+* fix: check of max_length first
+
+Only truncate if needed. Make code more readable. ([`5d69300`](https://github.com/e-alizadeh/Zotero2Readwise/commit/5d693001a84413510c451a6e0f6841197f0dd64b))
+
+### Unknown
+
+* Merge pull request #60 from noeleont/fix/author_names
+
+fix: creator/author field
+
+Thanks @noeleont for the contribution. ([`c5b7c59`](https://github.com/e-alizadeh/Zotero2Readwise/commit/c5b7c5940d7672fbb4b384917fe022635e30e88e))
+
+* Merge branch &#39;e-alizadeh:master&#39; into fix/author_names ([`603cdb4`](https://github.com/e-alizadeh/Zotero2Readwise/commit/603cdb4e856969e44b5cdec2f82616fac9f55e01))
+
+
 ## v0.4.1 (2023-11-08)
 
 ### Fix
@@ -16,6 +37,14 @@ fix(pyproject): version bump config ([`04f1083`](https://github.com/e-alizadeh/Z
 
 
 ## v0.4.0 (2023-11-08)
+
+### Fix
+
+* fix: enusuring backward compatibility
+
+To prevent the occurrence of duplicate entries in Readwise, we will
+amend the authors&#39; names to &#39;et al.&#39; exclusively in instances where
+their works have not been previously imported. ([`0d5197c`](https://github.com/e-alizadeh/Zotero2Readwise/commit/0d5197ce1f648945bdfebf109d98f4c350f8166b))
 
 ### Unknown
 
@@ -97,6 +126,10 @@ since the last sync, ideal for large collections. ([`42b3449`](https://github.co
 * fix(gha): try another fix for workflow ([`cb2f88f`](https://github.com/e-alizadeh/Zotero2Readwise/commit/cb2f88f8c295bcdfb926089e798c1f71467c288b))
 
 * fix(gha): update the workflow for package release ([`b6cbda7`](https://github.com/e-alizadeh/Zotero2Readwise/commit/b6cbda71e79d4a75fcd507611e9507c01327962b))
+
+* fix: creator/author field
+
+If there are more than three authors, replace the rest with &#34;et al.&#34; ([`3053550`](https://github.com/e-alizadeh/Zotero2Readwise/commit/305355066773e2009f2c865cc53fee56d2dd9211))
 
 ### Refactor
 
