@@ -1,9 +1,9 @@
 from argparse import ArgumentParser
 from distutils.util import strtobool
 
+from zotero2readwise.helper import write_library_version, read_library_version
 from zotero2readwise.zt2rw import Zotero2Readwise
 
-from helper import write_library_version, read_library_version
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Generate Markdown files")
