@@ -2,6 +2,19 @@
 
 
 
+## v0.4.3 (2023-11-27)
+
+### Fix
+
+* fix: :ambulance: use library path import instead of local one ([`b00d2da`](https://github.com/e-alizadeh/Zotero2Readwise/commit/b00d2da8fefc1e5bb14aed0d11fa99bcc58cb896))
+
+### Unknown
+
+* Merge pull request #67 from e-alizadeh/fix/local-import-from-helper
+
+fix: :ambulance: use library path import instead of local one ([`bfc5f15`](https://github.com/e-alizadeh/Zotero2Readwise/commit/bfc5f1514625da94799672bd48b9025ec5e8a633))
+
+
 ## v0.4.2 (2023-11-16)
 
 ### Fix
