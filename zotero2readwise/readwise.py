@@ -158,7 +158,7 @@ class Readwise:
         finished_msg += f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n\n"
         print(finished_msg)
 
-    def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
+    def save_failed_readwise_items_to_json(self, json_filepath_failed_items: str = None):
         FAILED_ITEMS_DIR.mkdir(parents=True, exist_ok=True)
         if json_filepath_failed_items:
             out_filepath = FAILED_ITEMS_DIR.joinpath(json_filepath_failed_items)
