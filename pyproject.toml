@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zotero2readwise"
-version = "0.4.3"
+version = "0.4.4"
 description = "Export your Zotero annotations and notes to Readwise"
 readme = "README.md"
 authors = ["ealizadeh <hello@ealizadeh.com>"]

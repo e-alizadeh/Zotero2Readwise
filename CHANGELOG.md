@@ -2,6 +2,23 @@
 
 
 
+## v0.4.4 (2023-12-12)
+
+### Fix
+
+* fix: Merge pull request #71 from jmhammond/master
+
+Fixes key error in metadata and ignores ink ([`45a79f7`](https://github.com/e-alizadeh/Zotero2Readwise/commit/45a79f74c1eb1490cf15af29d98ff9a1f0b7bfd1))
+
+### Unknown
+
+* Fixes key error in metadata and ignores ink
+
+This implements default values for metadata keys used elsewhere in code (avoiding key errors)
+
+It also raises an exception for ink annotations for handwritten notes, effectively ignoring them. ([`391eb7a`](https://github.com/e-alizadeh/Zotero2Readwise/commit/391eb7a96bf5fa054a3f33fba7eaa687bfcc34fd))
+
+
 ## v0.4.3 (2023-11-27)
 
 ### Fix
