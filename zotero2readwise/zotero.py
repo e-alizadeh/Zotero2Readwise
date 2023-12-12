@@ -149,7 +149,9 @@ class ZoteroAnnotationsNotes:
             # "date": data["date"],
             "tags": data["tags"],
             "document_type": data["itemType"],
-            "source_url": top_item["links"]["alternate"]["href"]
+            "source_url": top_item["links"]["alternate"]["href"],
+            "creators": "",
+            "attachment_url": "",
         }
         if "creators" in data:
             metadata["creators"] = [
@@ -177,6 +179,10 @@ class ZoteroAnnotationsNotes:
             elif annotation_type == "note":
                 text = data["annotationComment"]
                 comment = ""
+            else:
+                raise NotImplementedError(
+                    "Handwritten annotations are not currently supported."
+                )
         elif item_type == "note":
             text = data["note"]
             comment = ""
