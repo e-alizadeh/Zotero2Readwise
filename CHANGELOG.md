@@ -2,6 +2,35 @@
 
 
 
+## v0.4.5 (2024-02-22)
+
+### Build
+
+* build: :construction_worker: add `zotero2readwise` as a package to `pyproject.toml`.
+
+Update pre-commit ([`d45c77d`](https://github.com/e-alizadeh/Zotero2Readwise/commit/d45c77da04f4fd367021e88abb1bc7bb2dc81c95))
+
+### Fix
+
+* fix: :memo: update an oversight in the help ([`ef9ad94`](https://github.com/e-alizadeh/Zotero2Readwise/commit/ef9ad946941a0c1be5d769a263e35cb3f7c3aba6))
+
+* fix: empty commit to build a new release for PR#77 ([`7375368`](https://github.com/e-alizadeh/Zotero2Readwise/commit/7375368afd4657eda37b6662bc1f12bc07018aab))
+
+### Unknown
+
+* Merge pull request #79 from e-alizadeh/74-runpy-h-says-notes-are-included-by-default-by-they-arent
+
+fix: :memo: update an oversight in the help ([`bd9a2dc`](https://github.com/e-alizadeh/Zotero2Readwise/commit/bd9a2dc279b1992bffc14d710f2aea92ad692cab))
+
+* Merge pull request #78 from e-alizadeh/update-library-pkg
+
+fix: empty commit to build a new release for PR#77 ([`54d38ac`](https://github.com/e-alizadeh/Zotero2Readwise/commit/54d38acaa9a53e839ae1accce5e948fe58f43b2d))
+
+* Merge pull request #77 from e-alizadeh/update-library-pkg
+
+build: :construction_worker: add `zotero2readwise` as a package to `pyproject.toml`. ([`2e0601d`](https://github.com/e-alizadeh/Zotero2Readwise/commit/2e0601d58950e23c220ce45bfc539016b5ed4947))
+
+
 ## v0.4.4 (2023-12-12)
 
 ### Fix
