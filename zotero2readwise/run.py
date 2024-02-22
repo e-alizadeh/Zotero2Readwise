@@ -33,7 +33,7 @@ if __name__ == "__main__":
         "--include_notes",
         type=str,
         default="n",
-        help="Include Zotero notes | Options: 'y'/'yes' (default), 'n'/'no'",
+        help="Include Zotero notes | Options: 'y'/'yes', 'n'/'no' (default)",
     )
     parser.add_argument(
         "--filter_color",
