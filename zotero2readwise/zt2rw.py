@@ -55,7 +55,7 @@ class Zotero2Readwise:
         formatted_items = self.zotero.format_items(zot_annots_notes)
 
         if self.zotero.failed_items:
-            self.zotero.save_failed_items_to_json("failed_zotero_items.json")
+            self.zotero.save_failed_zotero_items_to_json("failed_zotero_items.json")
 
         self.readwise.post_zotero_annotations_to_readwise(formatted_items)
     

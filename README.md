@@ -68,12 +68,12 @@ zt_rw = Zotero2Readwise(
 )
 zt_rw.run()
 ```
-Just to make sure that all files are created, you can run `save_failed_items_to_json()` from `readwise` attribute of 
+Just to make sure that all files are created, you can run `save_failed_readwise_items_to_json()` from `readwise` attribute of 
 the class object to save any highlight that failed to upload to Readwise. 
 If a file or more failed to create, the filename (item title) and the corresponding Zotero 
 item key will be saved to a txt file. 
 ```python
-zt_rw.readwise.save_failed_items_to_json("failed_readwise_highlights.json")
+zt_rw.readwise.save_failed_readwise_items_to_json("failed_readwise_highlights.json")
 ```
 ---
 # [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync)

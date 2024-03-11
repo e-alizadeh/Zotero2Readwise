@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 from enum import Enum
-from json import dump
+import json
 from typing import Dict, List, Optional, Union
 
 import requests
 
 from zotero2readwise import FAILED_ITEMS_DIR
-from zotero2readwise.exception import Zotero2ReadwiseError
 from zotero2readwise.helper import sanitize_tag
 from zotero2readwise.zotero import ZoteroItem
 
@@ -57,23 +56,22 @@ class Readwise:
         self.endpoints = ReadwiseAPI
         self.failed_highlights: List = []
 
-    def create_highlights(self, highlights: List[Dict]) -> None:
+    def create_highlights(self, highlights: List[Dict]) -> List:
         resp = requests.post(
             url=self.endpoints.highlights,
             headers=self._header,
             json={"highlights": highlights},
         )
+        failed_rw_items = []
         if resp.status_code != 200:
-            error_log_file = (
-                f"error_log_{resp.status_code}_failed_post_request_to_readwise.json"
-            )
-            with open(error_log_file, "w") as f:
-                dump(resp.json(), f)
-            raise Zotero2ReadwiseError(
-                f"Uploading to Readwise failed with following details:\n"
-                f"POST request Status Code={resp.status_code} ({resp.reason})\n"
-                f"Error log is saved to {error_log_file} file."
-            )
+            for highlight, response in zip(highlights, json.loads(resp.text)):
+                # for successful highlights, the entry in the response will be an empty dictionary
+                if response:
+                    # Error case
+                    failed_rw_items.append(
+                        {"highlight": highlight, "error": response}
+                    )
+        return failed_rw_items
 
     @staticmethod
     def convert_tags_to_readwise_format(tags: List[str]) -> str:
@@ -131,14 +129,6 @@ class Readwise:
         rw_highlights = []
         for annot in zotero_annotations:
             try:
-                if len(annot.text) >= 8191:
-                    print(
-                        f"A Zotero annotation from an item with {annot.title} (item_key={annot.key} and "
-                        f"version={annot.version}) cannot be uploaded since the highlight/note is very long. "
-                        f"A Readwise highlight can be up to 8191 characters."
-                    )
-                    self.failed_highlights.append(annot.get_nonempty_params())
-                    continue  # Go to next annot
                 rw_highlight = self.convert_zotero_annotation_to_readwise_highlight(
                     annot
                 )
@@ -146,7 +136,8 @@ class Readwise:
                 self.failed_highlights.append(annot.get_nonempty_params())
                 continue  # Go to next annot
             rw_highlights.append(rw_highlight.get_nonempty_params())
-        self.create_highlights(rw_highlights)
+        failed_rw_items = self.create_highlights(rw_highlights)
+        self.failed_highlights.extend(failed_rw_items)
 
         finished_msg = ""
         if self.failed_highlights:
@@ -158,7 +149,7 @@ class Readwise:
         finished_msg += f"\n{len(rw_highlights)} highlights were successfully uploaded to Readwise.\n\n"
         print(finished_msg)
 
-    def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
+    def save_failed_readwise_items_to_json(self, json_filepath_failed_items: str = None):
         FAILED_ITEMS_DIR.mkdir(parents=True, exist_ok=True)
         if json_filepath_failed_items:
             out_filepath = FAILED_ITEMS_DIR.joinpath(json_filepath_failed_items)
@@ -166,7 +157,7 @@ class Readwise:
             out_filepath = FAILED_ITEMS_DIR.joinpath("failed_readwise_items.json")
 
         with open(out_filepath, "w") as f:
-            dump(self.failed_highlights, f)
+            json.dump(self.failed_highlights, f)
         print(
             f"{len(self.failed_highlights)} highlights failed to format (hence failed to upload to Readwise).\n"
             f"Detail of failed items are saved into {out_filepath}"

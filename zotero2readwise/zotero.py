@@ -233,12 +233,12 @@ class ZoteroAnnotationsNotes:
         if self.failed_items:
             finished_msg += (
                 f"\nNOTE: {len(self.failed_items)} Zotero annotations/notes (out of {len(annots)}) failed to format.\n"
-                f"You can run `save_failed_items_to_json()` class method to save those items."
+                f"You can run `save_failed_zotero_items_to_json()` class method to save those items."
             )
         print(finished_msg)
         return formatted_annots
 
-    def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
+    def save_failed_zotero_items_to_json(self, json_filepath_failed_items: str = None):
         FAILED_ITEMS_DIR.mkdir(parents=True, exist_ok=True)
         if json_filepath_failed_items:
             out_filepath = FAILED_ITEMS_DIR.joinpath(json_filepath_failed_items)
