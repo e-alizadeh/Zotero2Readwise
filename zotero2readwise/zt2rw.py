@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Sequence
 
 from zotero2readwise.readwise import Readwise
 from zotero2readwise.zotero import (
@@ -16,7 +16,9 @@ class Zotero2Readwise:
         zotero_library_type: str = "user",
         include_annotations: bool = True,
         include_notes: bool = False,
-        filter_colors: List[str] = [],
+        filter_colors: Sequence[str] = (),
+        filter_tags: Sequence[str] = (),
+        exclude_filter_tags: bool = True,
         since: int = 0
     ):
         self.readwise = Readwise(readwise_token)
@@ -25,7 +27,12 @@ class Zotero2Readwise:
             library_type=zotero_library_type,
             api_key=zotero_key,
         )
-        self.zotero = ZoteroAnnotationsNotes(self.zotero_client, filter_colors)
+        self.zotero = ZoteroAnnotationsNotes(
+            self.zotero_client,
+            filter_colors,
+            filter_tags,
+            exclude_filter_tags
+        )
         self.include_annots = include_annotations
         self.include_notes = include_notes
         self.since = since

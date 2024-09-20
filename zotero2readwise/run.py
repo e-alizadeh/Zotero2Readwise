@@ -43,6 +43,17 @@ if __name__ == "__main__":
         help="Filter Zotero annotations by given color | Options: '#ffd400' (yellow), '#ff6666' (red), '#5fb236' (green), '#2ea8e5' (blue), '#a28ae5' (purple), '#e56eee' (magenta), '#f19837' (orange), '#aaaaaa' (gray)"
     )
     parser.add_argument(
+        "--filter_tags",
+        action="append",
+        default=[],
+        help="Filter Zotero annotations by given tags"
+    )
+    parser.add_argument(
+        "--exclude_filter_tags",
+        action='store_true',
+        help="Remove the tags specified in --filter_tags from the Zotero annotations"
+    )
+    parser.add_argument(
         "--use_since",
         action='store_true',
         help="Include Zotero items since last run"
@@ -67,7 +78,9 @@ if __name__ == "__main__":
         zotero_library_type=args["library_type"],
         include_annotations=args["include_annotations"],
         include_notes=args["include_notes"],
-        filter_colors=args["filter_color"],
+        filter_colors=tuple(args["filter_color"]),
+        filter_tags=tuple(args["filter_tags"]),
+        exclude_filter_tags=args["exclude_filter_tags"],
         since=since
     )
     zt2rw.run()

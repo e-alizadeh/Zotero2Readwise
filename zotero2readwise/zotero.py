@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from json import dump
 from os import environ
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Sequence
 
 from pyzotero.zotero import Zotero
 from pyzotero.zotero_errors import ParamNotPassed, UnsupportedParams
@@ -125,12 +125,20 @@ def get_zotero_client(
 
 
 class ZoteroAnnotationsNotes:
-    def __init__(self, zotero_client: Zotero, filter_colors: List[str]):
+    def __init__(
+        self,
+        zotero_client: Zotero,
+        filter_colors: Sequence[str],
+        filter_tags: Sequence[str],
+        exclude_filter_tags: bool = True,
+    ):
         self.zot = zotero_client
         self.failed_items: List[Dict] = []
         self._cache: Dict = {}
         self._parent_mapping: Dict = {}
-        self.filter_colors: List[str] = filter_colors
+        self.filter_colors: Sequence[str] = filter_colors
+        self.filter_tags: Sequence[str] = filter_tags
+        self.exclude_filter_tags: bool = exclude_filter_tags
 
     def get_item_metadata(self, annot: Dict) -> Dict:
         data = annot["data"]
@@ -205,6 +213,9 @@ class ZoteroAnnotationsNotes:
 
         if text == "":
             raise ValueError("No annotation or note data is found.")
+
+        exclude_tags_set = set(self.filter_tags)
+
         return ZoteroItem(
             key=data["key"],
             version=data["version"],
@@ -215,7 +226,8 @@ class ZoteroAnnotationsNotes:
             attachment_url=metadata["attachment_url"],
             comment=comment,
             title=metadata["title"],
-            tags=data["tags"],
+            tags=[t for t in data["tags"] if t["tag"] not in exclude_tags_set] \
+                if data["tags"] else data["tags"],
             document_tags=metadata["tags"],
             document_type=metadata["document_type"],
             annotation_type=annotation_type,
@@ -235,7 +247,15 @@ class ZoteroAnnotationsNotes:
         )
         for annot in annots:
             try:
-                if len(self.filter_colors) == 0 or annot["data"]["annotationColor"] in self.filter_colors:
+                color_condition = (
+                    len(self.filter_colors) == 0 or
+                    annot["data"]["annotationColor"] in self.filter_colors
+                )
+                tag_condition = (
+                    len(self.filter_tags) == 0 or
+                    any(tag["tag"] in self.filter_tags for tag in annot["data"]["tags"])
+                )
+                if color_condition and tag_condition:
                     formatted_annots.append(self.format_item(annot))
             except:
                 self.failed_items.append(annot)
