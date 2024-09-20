@@ -130,7 +130,7 @@ class ZoteroAnnotationsNotes:
         zotero_client: Zotero,
         filter_colors: Sequence[str],
         filter_tags: Sequence[str],
-        exclude_filter_tags: bool = True,
+        include_filter_tags: bool = False,
     ):
         self.zot = zotero_client
         self.failed_items: List[Dict] = []
@@ -138,7 +138,7 @@ class ZoteroAnnotationsNotes:
         self._parent_mapping: Dict = {}
         self.filter_colors: Sequence[str] = filter_colors
         self.filter_tags: Sequence[str] = filter_tags
-        self.exclude_filter_tags: bool = exclude_filter_tags
+        self.include_filter_tags: bool = include_filter_tags
 
     def get_item_metadata(self, annot: Dict) -> Dict:
         data = annot["data"]
@@ -216,6 +216,13 @@ class ZoteroAnnotationsNotes:
 
         exclude_tags_set = set(self.filter_tags)
 
+        if self.include_filter_tags:
+            tags = data["tags"]
+        else:
+            tags = [t for t in data["tags"] if t["tag"] not in exclude_tags_set] \
+                if data["tags"] else data["tags"]
+
+
         return ZoteroItem(
             key=data["key"],
             version=data["version"],
@@ -226,8 +233,7 @@ class ZoteroAnnotationsNotes:
             attachment_url=metadata["attachment_url"],
             comment=comment,
             title=metadata["title"],
-            tags=[t for t in data["tags"] if t["tag"] not in exclude_tags_set] \
-                if data["tags"] else data["tags"],
+            tags=tags,
             document_tags=metadata["tags"],
             document_type=metadata["document_type"],
             annotation_type=annotation_type,

@@ -18,7 +18,7 @@ class Zotero2Readwise:
         include_notes: bool = False,
         filter_colors: Sequence[str] = (),
         filter_tags: Sequence[str] = (),
-        exclude_filter_tags: bool = True,
+        include_filter_tags: bool = False,
         since: int = 0
     ):
         self.readwise = Readwise(readwise_token)
@@ -31,7 +31,7 @@ class Zotero2Readwise:
             self.zotero_client,
             filter_colors,
             filter_tags,
-            exclude_filter_tags
+            include_filter_tags
         )
         self.include_annots = include_annotations
         self.include_notes = include_notes

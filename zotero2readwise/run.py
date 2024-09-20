@@ -49,9 +49,9 @@ if __name__ == "__main__":
         help="Filter Zotero annotations by given tags"
     )
     parser.add_argument(
-        "--exclude_filter_tags",
+        "--include_filter_tags",
         action='store_true',
-        help="Remove the tags specified in --filter_tags from the Zotero annotations"
+        help="Include the tags used for --filter_tags in the Zotero annotations."
     )
     parser.add_argument(
         "--use_since",
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         include_notes=args["include_notes"],
         filter_colors=tuple(args["filter_color"]),
         filter_tags=tuple(args["filter_tags"]),
-        exclude_filter_tags=args["exclude_filter_tags"],
+        include_filter_tags=args["include_filter_tags"],
         since=since
     )
     zt2rw.run()
