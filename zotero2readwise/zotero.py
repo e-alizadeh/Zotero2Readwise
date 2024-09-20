@@ -43,17 +43,29 @@ class ZoteroItem:
             self.relations = self.relations.get("dc:relation")
         
         if self.creators:
-            et_al = "et al."
-            max_length = 1024 - len(et_al)
-            creators_str = ", ".join(self.creators)
-            if len(creators_str) > max_length:
-                # Reset creators_str and find the first n creators that fit in max_length
-                creators_str = ""
-                while self.creators and len(creators_str) < max_length:
-                    creators_str += self.creators.pop() + ", "
-                creators_str += et_al
-            self.creators = creators_str
+            self.creators = self.format_author_list(self.creators)
 
+    @staticmethod
+    def format_author_list(authors):
+        MAX_LENGTH = 1024
+        MAX_AUTHOR_LENGTH = 256
+        SEP = ", "
+        ET_AL = " et al."
+
+        # Truncate each author name to 256 characters. this simplifies logic considerably
+        authors = [author[:MAX_AUTHOR_LENGTH] for author in authors]
+
+        # Start with the full list of authors
+        result = SEP.join(authors)
+
+        # If the result is too long, remove authors from the end until it fits with SEP + ET_AL appended
+        # There is no risk that we will run out of authors for .pop() because MAX_LENGTH >> MAX_AUTHOR_LENGTH
+        # likewise we're guaranteed to be able to fit at least one author
+        while len(result) > MAX_LENGTH:
+            authors.pop()
+            result = SEP.join(authors) + SEP + ET_AL
+
+        return result
 
     def get_nonempty_params(self) -> Dict:
         return {k: v for k, v in self.__dict__.items() if v}
