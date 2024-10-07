@@ -5,7 +5,7 @@ from zotero2readwise.helper import write_library_version, read_library_version
 from zotero2readwise.zt2rw import Zotero2Readwise
 
 
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser(description="Generate Markdown files")
     parser.add_argument(
         "readwise_token",
@@ -73,3 +73,6 @@ if __name__ == "__main__":
     zt2rw.run()
     if args["use_since"]:
         write_library_version(zt2rw.zotero_client)
+
+if __name__ == "__main__":
+    main()

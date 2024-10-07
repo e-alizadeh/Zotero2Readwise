@@ -38,11 +38,15 @@ env = "GH_TOKEN" # default env name containing the GitHub Token
 python = "^3.8"
 Pyzotero = "^1.4.26"
 requests = "^2.26.0"
+setuptools = ">= 45"  # necessary for python 3.12
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^7.32.0"
 pre-commit = "^2.16.0"
 ipdb = "^0.13.9"
+
+[tool.poetry.scripts]
+run = "zotero2readwise.run:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
