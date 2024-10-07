@@ -7,4 +7,5 @@ __version__ = "0.4.5"
 TOP_DIR = Path(__file__).parent
 # If TOP_DIR is readonly os with nix,
 # then failed_zotero_items.json is written to the working directory instead.
-FAILED_ITEMS_DIR = TOP_DIR if os.access(TOP_DIR, os.W_OK) else Path(".")
+FAILED_ITEMS_DIR = TOP_DIR if os.access(TOP_DIR, os.W_OK) else Path.cwd()
+print(TOP_DIR, FAILED_ITEMS_DIR, sep="\n")
