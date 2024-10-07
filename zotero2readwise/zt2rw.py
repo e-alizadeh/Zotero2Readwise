@@ -17,7 +17,8 @@ class Zotero2Readwise:
         include_annotations: bool = True,
         include_notes: bool = False,
         filter_colors: List[str] = [],
-        since: int = 0
+        since: int = 0,
+        write_failures: bool = True
     ):
         self.readwise = Readwise(readwise_token)
         self.zotero_client = get_zotero_client(
@@ -29,6 +30,7 @@ class Zotero2Readwise:
         self.include_annots = include_annotations
         self.include_notes = include_notes
         self.since = since
+        self.write_failures = write_failures
 
     def get_all_zotero_items(self) -> List[Dict]:
             """
@@ -54,7 +56,7 @@ class Zotero2Readwise:
 
         formatted_items = self.zotero.format_items(zot_annots_notes)
 
-        if self.zotero.failed_items:
+        if self.write_failures and self.zotero.failed_items:
             self.zotero.save_failed_items_to_json("failed_zotero_items.json")
 
         self.readwise.post_zotero_annotations_to_readwise(formatted_items)

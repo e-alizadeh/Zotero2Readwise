@@ -47,6 +47,11 @@ def main():
         action='store_true',
         help="Include Zotero items since last run"
     )
+    parser.add_argument(
+        "--suppress_failures",
+        action='store_true',
+        help="Do not write annotations that failed to port to a report file."
+    )
 
     args = vars(parser.parse_args())
 
@@ -68,7 +73,8 @@ def main():
         include_annotations=args["include_annotations"],
         include_notes=args["include_notes"],
         filter_colors=args["filter_color"],
-        since=since
+        since=since,
+        write_failures=not args["suppress_failures"]
     )
     zt2rw.run()
     if args["use_since"]:
