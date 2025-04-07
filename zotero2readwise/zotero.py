@@ -4,7 +4,8 @@ from os import environ
 from typing import Dict, List, Optional
 
 from pyzotero.zotero import Zotero
-from pyzotero.zotero_errors import ParamNotPassed, UnsupportedParams
+from pyzotero.zotero_errors import UnsupportedParams
+ParamNotPassed = UnsupportedParams
 
 from zotero2readwise import FAILED_ITEMS_DIR
 
