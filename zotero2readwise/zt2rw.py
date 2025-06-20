@@ -79,5 +79,5 @@ class Zotero2Readwise:
             print(f"Retrieving {item_type}s since last run from Zotero Database")
 
         print("It may take some time...")
-        query = self.zotero_client.items(itemType={item_type}, since=since)
+        query = self.zotero_client.items(itemType=item_type, since=since)
         return self.zotero_client.everything(query)
