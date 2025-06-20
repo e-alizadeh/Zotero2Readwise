@@ -5,7 +5,7 @@ from zotero2readwise.helper import write_library_version, read_library_version
 from zotero2readwise.zt2rw import Zotero2Readwise
 
 
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser(description="Generate Markdown files")
     parser.add_argument(
         "readwise_token",
@@ -47,6 +47,11 @@ if __name__ == "__main__":
         action='store_true',
         help="Include Zotero items since last run"
     )
+    parser.add_argument(
+        "--suppress_failures",
+        action='store_true',
+        help="Do not write annotations that failed to port to a report file."
+    )
 
     args = vars(parser.parse_args())
 
@@ -68,8 +73,12 @@ if __name__ == "__main__":
         include_annotations=args["include_annotations"],
         include_notes=args["include_notes"],
         filter_colors=args["filter_color"],
-        since=since
+        since=since,
+        write_failures=not args["suppress_failures"]
     )
     zt2rw.run()
     if args["use_since"]:
         write_library_version(zt2rw.zotero_client)
+
+if __name__ == "__main__":
+    main()

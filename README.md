@@ -75,6 +75,15 @@ item key will be saved to a txt file.
 ```python
 zt_rw.readwise.save_failed_items_to_json("failed_readwise_highlights.json")
 ```
+
+## Approach 3 (through the nix flake)
+If you have `nix`, you can skip any installation and do:
+```sh
+nix run github:e-alizadeh/Zotero2Readwise -- <readwise_token> <zotero_key> <zotero_id>
+```
+The text file with failed highlights, which usually would be written to the Zotero2Readwise python package directory, will now be written to you working directory, since nix does not allow writing to package directories.
+If you don't want this file created, supply `--suppress_failures` as an additional argument.
+
 ---
 # [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync)
 

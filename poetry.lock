@@ -525,7 +525,7 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<5)"]
 name = "setuptools"
 version = "75.3.2"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
@@ -646,4 +646,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "0596a4da67055c07a44f0f67a7cd9a69775a0f2ee2f356c7ab5aebaeacc58f8f"
+content-hash = "da4f0c96fb2f709f9d3121a269ffcfe2db859f67263215a9e8cc8acab9842076"
