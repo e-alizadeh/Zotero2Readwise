@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from json import dump
 from os import environ
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Sequence
 
 from pyzotero.zotero import Zotero
 
@@ -40,19 +40,31 @@ class ZoteroItem:
         # Sample {'dc:relation': ['http://zotero.org/users/123/items/ABC', 'http://zotero.org/users/123/items/DEF']}
         if self.relations:
             self.relations = self.relations.get("dc:relation")
-        
-        if self.creators:
-            et_al = "et al."
-            max_length = 1024 - len(et_al)
-            creators_str = ", ".join(self.creators)
-            if len(creators_str) > max_length:
-                # Reset creators_str and find the first n creators that fit in max_length
-                creators_str = ""
-                while self.creators and len(creators_str) < max_length:
-                    creators_str += self.creators.pop() + ", "
-                creators_str += et_al
-            self.creators = creators_str
 
+        if self.creators:
+            self.creators = self.format_author_list(self.creators)
+
+    @staticmethod
+    def format_author_list(authors):
+        MAX_LENGTH = 1024
+        MAX_AUTHOR_LENGTH = 256
+        SEP = ", "
+        ET_AL = " et al."
+
+        # Truncate each author name to 256 characters. this simplifies logic considerably
+        authors = [author[:MAX_AUTHOR_LENGTH] for author in authors]
+
+        # Start with the full list of authors
+        result = SEP.join(authors)
+
+        # If the result is too long, remove authors from the end until it fits with SEP + ET_AL appended
+        # There is no risk that we will run out of authors for .pop() because MAX_LENGTH >> MAX_AUTHOR_LENGTH
+        # likewise we're guaranteed to be able to fit at least one author
+        while len(result) > MAX_LENGTH:
+            authors.pop()
+            result = SEP.join(authors) + SEP + ET_AL
+
+        return result
 
     def get_nonempty_params(self) -> Dict:
         return {k: v for k, v in self.__dict__.items() if v}
@@ -112,18 +124,26 @@ def get_zotero_client(
 
 
 class ZoteroAnnotationsNotes:
-    def __init__(self, zotero_client: Zotero, filter_colors: List[str]):
+    def __init__(
+        self,
+        zotero_client: Zotero,
+        filter_colors: Sequence[str],
+        filter_tags: Sequence[str],
+        include_filter_tags: bool = False,
+    ):
         self.zot = zotero_client
         self.failed_items: List[Dict] = []
         self._cache: Dict = {}
         self._parent_mapping: Dict = {}
-        self.filter_colors: List[str] = filter_colors
+        self.filter_colors: Sequence[str] = filter_colors
+        self.filter_tags: Sequence[str] = filter_tags
+        self.include_filter_tags: bool = include_filter_tags
 
     def get_item_metadata(self, annot: Dict) -> Dict:
         data = annot["data"]
         # A Zotero annotation or note must have a parent with parentItem key.
         parent_item_key = data["parentItem"]
-        
+
         if parent_item_key in self._parent_mapping:
             top_item_key = self._parent_mapping[parent_item_key]
             if top_item_key in self._cache:
@@ -154,10 +174,12 @@ class ZoteroAnnotationsNotes:
         }
         if "creators" in data:
             metadata["creators"] = [
-                creator["firstName"] + " " + creator["lastName"]
-                for creator in data["creators"]
+                creator["firstName"] + " " + creator["lastName"] for creator in data["creators"]
             ]
-        if "attachment" in top_item["links"] and top_item["links"]["attachment"]["attachmentType"] == "application/pdf":
+        if (
+            "attachment" in top_item["links"]
+            and top_item["links"]["attachment"]["attachmentType"] == "application/pdf"
+        ):
             metadata["attachment_url"] = top_item["links"]["attachment"]["href"]
 
         self._cache[top_item_key] = metadata
@@ -179,9 +201,7 @@ class ZoteroAnnotationsNotes:
                 text = data["annotationComment"]
                 comment = ""
             else:
-                raise NotImplementedError(
-                    "Handwritten annotations are not currently supported."
-                )
+                raise NotImplementedError("Handwritten annotations are not currently supported.")
         elif item_type == "note":
             text = data["note"]
             comment = ""
@@ -192,6 +212,18 @@ class ZoteroAnnotationsNotes:
 
         if text == "":
             raise ValueError("No annotation or note data is found.")
+
+        exclude_tags_set = set(self.filter_tags)
+
+        if self.include_filter_tags:
+            tags = data["tags"]
+        else:
+            tags = (
+                [t for t in data["tags"] if t["tag"] not in exclude_tags_set]
+                if data["tags"]
+                else data["tags"]
+            )
+
         return ZoteroItem(
             key=data["key"],
             version=data["version"],
@@ -202,7 +234,7 @@ class ZoteroAnnotationsNotes:
             attachment_url=metadata["attachment_url"],
             comment=comment,
             title=metadata["title"],
-            tags=data["tags"],
+            tags=tags,
             document_tags=metadata["tags"],
             document_type=metadata["document_type"],
             annotation_type=annotation_type,
@@ -222,7 +254,14 @@ class ZoteroAnnotationsNotes:
         )
         for annot in annots:
             try:
-                if len(self.filter_colors) == 0 or annot["data"]["annotationColor"] in self.filter_colors:
+                color_condition = (
+                    len(self.filter_colors) == 0
+                    or annot["data"]["annotationColor"] in self.filter_colors
+                )
+                tag_condition = len(self.filter_tags) == 0 or any(
+                    tag["tag"] in self.filter_tags for tag in annot["data"]["tags"]
+                )
+                if color_condition and tag_condition:
                     formatted_annots.append(self.format_item(annot))
             except:
                 self.failed_items.append(annot)
