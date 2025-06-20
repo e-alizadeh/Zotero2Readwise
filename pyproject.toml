@@ -32,13 +32,14 @@ version_variables = [
 ]
 
 [tool.semantic_release.remote.token]
-env = "GH_TOKEN" # default env name containing the GitHub Token 
+env = "GH_TOKEN" # default env name containing the GitHub Token
 
 [tool.poetry.dependencies]
 python = "^3.8"
 Pyzotero = "^1.4.26"
 requests = "^2.26.0"
 setuptools = ">= 45"  # necessary for python 3.12
+python-dotenv = "<1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^7.32.0"
