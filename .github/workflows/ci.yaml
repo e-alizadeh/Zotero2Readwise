@@ -32,7 +32,7 @@ jobs:
           virtualenvs-in-project: false
 
       - name: Install dependencies with Poetry
-        run: poetry install --no-root
+        run: poetry install
 
       - name: 🐍 Python Semantic Release
         id: srelease
