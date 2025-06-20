@@ -25,17 +25,14 @@ jobs:
           python-version: '3.8'
       
       - name: 💻 Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: ⚙️ Configure Poetry
-        run: |
-          poetry config virtualenvs.create false
-          poetry config virtualenvs.in-project false
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.8.3
+          virtualenvs-create: false
+          virtualenvs-in-project: false
 
       - name: Install dependencies with Poetry
-        run: poetry install --no-root
+        run: poetry install
 
       - name: 🐍 Python Semantic Release
         id: srelease

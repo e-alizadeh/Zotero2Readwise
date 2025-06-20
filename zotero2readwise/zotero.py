@@ -4,7 +4,6 @@ from os import environ
 from typing import Dict, List, Optional, Sequence
 
 from pyzotero.zotero import Zotero
-from pyzotero.zotero_errors import ParamNotPassed, UnsupportedParams
 
 from zotero2readwise import FAILED_ITEMS_DIR
 
@@ -41,7 +40,7 @@ class ZoteroItem:
         # Sample {'dc:relation': ['http://zotero.org/users/123/items/ABC', 'http://zotero.org/users/123/items/DEF']}
         if self.relations:
             self.relations = self.relations.get("dc:relation")
-        
+
         if self.creators:
             self.creators = self.format_author_list(self.creators)
 
@@ -98,7 +97,7 @@ def get_zotero_client(
         try:
             library_id = environ["ZOTERO_LIBRARY_ID"]
         except KeyError:
-            raise ParamNotPassed(
+            raise ValueError(
                 "No value for library_id is found. "
                 "You can set it as an environment variable `ZOTERO_LIBRARY_ID` or use `library_id` to set it."
             )
@@ -107,7 +106,7 @@ def get_zotero_client(
         try:
             api_key = environ["ZOTERO_KEY"]
         except KeyError:
-            raise ParamNotPassed(
+            raise ValueError(
                 "No value for api_key is found. "
                 "You can set it as an environment variable `ZOTERO_KEY` or use `api_key` to set it."
             )
@@ -115,7 +114,7 @@ def get_zotero_client(
     if library_type is None:
         library_type = environ.get("LIBRARY_TYPE", "user")
     elif library_type not in ["user", "group"]:
-        raise UnsupportedParams("library_type value can either be 'user' or 'group'.")
+        raise ValueError("library_type value can either be 'user' or 'group'.")
 
     return Zotero(
         library_id=library_id,
@@ -144,7 +143,7 @@ class ZoteroAnnotationsNotes:
         data = annot["data"]
         # A Zotero annotation or note must have a parent with parentItem key.
         parent_item_key = data["parentItem"]
-        
+
         if parent_item_key in self._parent_mapping:
             top_item_key = self._parent_mapping[parent_item_key]
             if top_item_key in self._cache:
@@ -175,10 +174,12 @@ class ZoteroAnnotationsNotes:
         }
         if "creators" in data:
             metadata["creators"] = [
-                creator["firstName"] + " " + creator["lastName"]
-                for creator in data["creators"]
+                creator["firstName"] + " " + creator["lastName"] for creator in data["creators"]
             ]
-        if "attachment" in top_item["links"] and top_item["links"]["attachment"]["attachmentType"] == "application/pdf":
+        if (
+            "attachment" in top_item["links"]
+            and top_item["links"]["attachment"]["attachmentType"] == "application/pdf"
+        ):
             metadata["attachment_url"] = top_item["links"]["attachment"]["href"]
 
         self._cache[top_item_key] = metadata
@@ -200,9 +201,7 @@ class ZoteroAnnotationsNotes:
                 text = data["annotationComment"]
                 comment = ""
             else:
-                raise NotImplementedError(
-                    "Handwritten annotations are not currently supported."
-                )
+                raise NotImplementedError("Handwritten annotations are not currently supported.")
         elif item_type == "note":
             text = data["note"]
             comment = ""
@@ -219,9 +218,11 @@ class ZoteroAnnotationsNotes:
         if self.include_filter_tags:
             tags = data["tags"]
         else:
-            tags = [t for t in data["tags"] if t["tag"] not in exclude_tags_set] \
-                if data["tags"] else data["tags"]
-
+            tags = (
+                [t for t in data["tags"] if t["tag"] not in exclude_tags_set]
+                if data["tags"]
+                else data["tags"]
+            )
 
         return ZoteroItem(
             key=data["key"],
@@ -254,12 +255,11 @@ class ZoteroAnnotationsNotes:
         for annot in annots:
             try:
                 color_condition = (
-                    len(self.filter_colors) == 0 or
-                    annot["data"]["annotationColor"] in self.filter_colors
+                    len(self.filter_colors) == 0
+                    or annot["data"]["annotationColor"] in self.filter_colors
                 )
-                tag_condition = (
-                    len(self.filter_tags) == 0 or
-                    any(tag["tag"] in self.filter_tags for tag in annot["data"]["tags"])
+                tag_condition = len(self.filter_tags) == 0 or any(
+                    tag["tag"] in self.filter_tags for tag in annot["data"]["tags"]
                 )
                 if color_condition and tag_condition:
                     formatted_annots.append(self.format_item(annot))
