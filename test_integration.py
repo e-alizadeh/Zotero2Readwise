@@ -2,6 +2,7 @@
 """
 Integration test based on README example
 """
+
 import os
 
 from dotenv import load_dotenv

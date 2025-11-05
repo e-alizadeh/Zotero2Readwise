@@ -9,8 +9,12 @@ Zotero2Readwise is a Python library that synchronizes Zotero annotations and not
 
 ### Setup
 ```bash
-poetry install          # Install dependencies
-poetry shell            # Activate virtual environment
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install dependencies
+uv sync --all-extras          # Install all dependencies including dev
+uv sync                       # Install only production dependencies
 ```
 
 ### Code Quality
@@ -20,17 +24,21 @@ pre-commit run --all-files    # Run all code quality checks (ruff, black, mypy, 
 
 ### Testing
 ```bash
-python test_integration.py    # Run integration test
+# Run all tests with coverage
+uv run pytest
+
+# Run integration test (legacy)
+uv run python test_integration.py
 # Note: Requires environment variables: READWISE_TOKEN, ZOTERO_API_KEY, ZOTERO_USER_ID
 ```
 
 ### Running the Application
 ```bash
-# Via poetry script
-poetry run run <readwise_token> <zotero_key> <zotero_id>
+# Via uv script
+uv run run <readwise_token> <zotero_key> <zotero_id>
 
 # Direct Python execution
-python zotero2readwise/run.py <readwise_token> <zotero_key> <zotero_id>
+uv run python zotero2readwise/run.py <readwise_token> <zotero_key> <zotero_id>
 
 # With Nix
 nix run github:e-alizadeh/Zotero2Readwise -- <readwise_token> <zotero_key> <zotero_id>
