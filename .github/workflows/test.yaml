@@ -24,15 +24,14 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
       - name: 📦 Install uv
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: 🐍 Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
 
       - name: 🔧 Install dependencies
         run: uv sync --all-extras
@@ -56,15 +55,14 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
       - name: 📦 Install uv
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: 🐍 Set up Python 3.12
+        run: uv python install 3.12
 
       - name: 🔧 Install dependencies
         run: uv sync --all-extras
@@ -88,13 +86,14 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
       - name: 📦 Install uv
         uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: 🐍 Set up Python 3.12
+        run: uv python install 3.12
 
       - name: 🏗️ Build package
         run: uv build
