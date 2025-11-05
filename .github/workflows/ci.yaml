@@ -40,6 +40,9 @@ jobs:
         uses: python-semantic-release/python-semantic-release@v9.15.1
         with:
           github_token: ${{ secrets.GH_TOKEN }}
+        env:
+          # Ensure semantic-release can access uv in PATH
+          PATH: ${{ env.PATH }}
 
       - name: 🔍 Print Semantic Release Output
         if: always()
@@ -50,7 +53,10 @@ jobs:
 
       - name: 🛠️ Build distributions with uv
         if: steps.srelease.outputs.released == 'true'
-        run: uv build
+        run: |
+          echo "Building version ${{ steps.srelease.outputs.version }}"
+          uv build
+          ls -lh dist/
 
       - name: 🚀 Publish to PyPI
         if: steps.srelease.outputs.released == 'true'
