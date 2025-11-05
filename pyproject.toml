@@ -48,13 +48,24 @@ Documentation = "https://github.com/e-alizadeh/Zotero2Readwise"
 run = "zotero2readwise.run:main"
 
 [tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
 version_variables = [
     "zotero2readwise/__init__.py:__version__",
-    "pyproject.toml:version"
 ]
+build_command = "uv build"
+major_on_zero = false
+tag_format = "{version}"
 
-[tool.semantic_release.remote.token]
-env = "GH_TOKEN"
+[tool.semantic_release.branches.main]
+match = "(main|master)"
+
+[tool.semantic_release.changelog]
+changelog_file = "CHANGELOG.md"
+exclude_commit_patterns = []
+
+[tool.semantic_release.remote]
+type = "github"
+token = { env = "GH_TOKEN" }
 
 [tool.black]
 line-length = 100

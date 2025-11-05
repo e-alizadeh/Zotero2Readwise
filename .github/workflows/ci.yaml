@@ -1,12 +1,15 @@
 name: Release
+
 on:
   push:
     branches:
       - master
     paths-ignore:
       - '**.md'
+
 jobs:
   release:
+    name: Release and Publish
     runs-on: ubuntu-latest
     concurrency: release
     permissions:
@@ -14,52 +17,51 @@ jobs:
       contents: write
 
     steps:
-      - name: 📥 Checkout repo
-        uses: actions/checkout@v3
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
 
-      - name: 🐍  Setup Python 3.8
-        uses: actions/setup-python@v4
+      - name: 🐍 Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
-      
-      - name: 💻 Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.8.3
-          virtualenvs-create: false
-          virtualenvs-in-project: false
+          python-version: '3.12'
 
-      - name: Install dependencies with Poetry
-        run: poetry install
+      - name: 📦 Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: 🔧 Install dependencies
+        run: |
+          uv sync --all-extras
 
       - name: 🐍 Python Semantic Release
         id: srelease
-        uses: python-semantic-release/python-semantic-release@v8.3.0
+        uses: python-semantic-release/python-semantic-release@v9.15.1
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-      
-      - name: 🔍 Print Semantic Release Output (for Debugging purposes)
+
+      - name: 🔍 Print Semantic Release Output
         if: always()
         run: |
           echo "Released: ${{ steps.srelease.outputs.released }}"
-          echo "New version: ${{ steps.srelease.outputs.new_version }}"
-          echo "Version change: ${{ steps.srelease.outputs.version_change }}"
+          echo "Version: ${{ steps.srelease.outputs.version }}"
+          echo "Tag: ${{ steps.srelease.outputs.tag }}"
 
-      - name: 🛠️ Build distributions with Poetry
-        run: poetry build
+      - name: 🛠️ Build distributions with uv
         if: steps.srelease.outputs.released == 'true'
+        run: |
+          uv build
 
       - name: 🚀 Publish to PyPI
+        if: steps.srelease.outputs.released == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
-        if: steps.srelease.outputs.released == 'true'
         with:
-          user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
-      
+
       - name: 🚀 Publish to GitHub Releases
-        uses: python-semantic-release/upload-to-gh-release@main
         if: steps.srelease.outputs.released == 'true'
+        uses: python-semantic-release/upload-to-gh-release@main
         with:
           github_token: ${{ secrets.GH_TOKEN }}
+          tag: ${{ steps.srelease.outputs.tag }}
