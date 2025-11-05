@@ -52,9 +52,10 @@ version_toml = ["pyproject.toml:project.version"]
 version_variables = [
     "zotero2readwise/__init__.py:__version__",
 ]
-build_command = "uv build"
+# Don't build during semantic-release - we'll build afterwards when uv is available
+build_command = "echo 'Skipping build - will build after semantic-release'"
 major_on_zero = false
-tag_format = "{version}"
+tag_format = "v{version}"
 
 [tool.semantic_release.branches.main]
 match = "(main|master)"
@@ -62,6 +63,22 @@ match = "(main|master)"
 [tool.semantic_release.changelog]
 changelog_file = "CHANGELOG.md"
 exclude_commit_patterns = []
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = [
+    "feat",
+    "fix",
+    "docs",
+    "style",
+    "refactor",
+    "perf",
+    "test",
+    "build",
+    "ci",
+    "chore",
+]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf"]
 
 [tool.semantic_release.remote]
 type = "github"
