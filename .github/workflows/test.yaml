@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.12', '3.13']
+        python-version: ["3.12", "3.13"]
 
     steps:
       - name: 📥 Checkout repository
@@ -67,15 +67,14 @@ jobs:
       - name: 🔧 Install dependencies
         run: uv sync --all-extras
 
-      - name: 🎨 Check code formatting with black
-        run: uv run black --check .
+      - name: 🗂️ Cache pre-commit environments
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
 
-      - name: 🔍 Lint with ruff
-        run: uv run ruff check .
-
-      - name: 🔬 Type check with mypy
-        run: uv run mypy zotero2readwise
-        continue-on-error: true
+      - name: 🎨 Run pre-commit checks
+        run: uv run pre-commit run --all-files
 
   build:
     name: Build distribution

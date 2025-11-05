@@ -13,23 +13,30 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-merge-conflict
       - id: check-yaml
+        exclude: ^(CHANGELOG\.md|claude\.md)$
       - id: check-toml
       - id: debug-statements
       - id: end-of-file-fixer
+        exclude: ^(CHANGELOG\.md|claude\.md)$
       - id: trailing-whitespace
+        exclude: ^(CHANGELOG\.md|claude\.md)$
   - repo: https://github.com/ambv/black
     rev: 24.10.0
     hooks:
     - id: black
       language_version: python3.12
+      exclude: ^(CHANGELOG\.md|claude\.md)$
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.13.0
     hooks:
     -   id: mypy
         additional_dependencies: [mypy-extensions]
+        exclude: ^(CHANGELOG\.md|claude\.md)$
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.5
     hooks:
       - id: ruff
         args: [--fix]
+        exclude: ^(CHANGELOG\.md|claude\.md)$
       - id: ruff-format
+        exclude: ^(CHANGELOG\.md|claude\.md)$
