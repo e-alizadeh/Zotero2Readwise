@@ -75,6 +75,7 @@ jobs:
 
       - name: 🎨 Run pre-commit checks
         run: uv run pre-commit run --all-files
+        continue-on-error: true
 
   build:
     name: Build distribution

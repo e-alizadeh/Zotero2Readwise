@@ -1,18 +1,17 @@
 """Tests for Readwise module."""
 
-import json
-import pytest
-from unittest.mock import Mock, patch, mock_open, MagicMock
-from pathlib import Path
+from unittest.mock import Mock, mock_open, patch
 
+import pytest
+
+from zotero2readwise.exception import Zotero2ReadwiseError
 from zotero2readwise.readwise import (
-    Readwise,
-    ReadwiseHighlight,
-    ReadwiseAPI,
     Category,
+    Readwise,
+    ReadwiseAPI,
+    ReadwiseHighlight,
 )
 from zotero2readwise.zotero import ZoteroItem
-from zotero2readwise.exception import Zotero2ReadwiseError
 
 
 class TestReadwiseAPI:
@@ -283,9 +282,7 @@ class TestReadwise:
         assert "annotation=ABC123" in highlight.highlight_url
 
     @patch("zotero2readwise.readwise.requests.post")
-    def test_post_zotero_annotations_to_readwise_success(
-        self, mock_post, readwise_token
-    ):
+    def test_post_zotero_annotations_to_readwise_success(self, mock_post, readwise_token):
         """Test posting annotations to Readwise."""
         mock_response = Mock()
         mock_response.status_code = 200

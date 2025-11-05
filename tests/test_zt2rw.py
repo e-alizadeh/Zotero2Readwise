@@ -1,10 +1,11 @@
 """Tests for Zotero2Readwise main module."""
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
-from zotero2readwise.zt2rw import Zotero2Readwise
+import pytest
+
 from zotero2readwise.zotero import ZoteroItem
+from zotero2readwise.zt2rw import Zotero2Readwise
 
 
 class TestZotero2Readwise:
@@ -14,7 +15,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_initialization(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test Zotero2Readwise initialization."""
         mock_client = Mock()
@@ -42,7 +48,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_initialization_with_filters(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test initialization with color and tag filters."""
         mock_client = Mock()
@@ -67,7 +78,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_get_all_zotero_items_annotations_only(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test retrieving only annotations."""
         mock_client = Mock()
@@ -94,7 +110,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_get_all_zotero_items_notes_only(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test retrieving only notes."""
         mock_client = Mock()
@@ -121,7 +142,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_get_all_zotero_items_both(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test retrieving both annotations and notes."""
         mock_client = Mock()
@@ -156,7 +182,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_get_all_zotero_items_with_since(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test retrieving items with 'since' parameter."""
         mock_client = Mock()
@@ -182,7 +213,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_retrieve_all_invalid_item_type(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test that invalid item type raises ValueError."""
         mock_client = Mock()
@@ -201,7 +237,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_run_without_items(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test running sync without providing items (fetches from Zotero)."""
         mock_client = Mock()
@@ -243,15 +284,18 @@ class TestZotero2Readwise:
         zt_rw.run()
 
         mock_zotero.format_items.assert_called_once_with(mock_items)
-        mock_readwise.post_zotero_annotations_to_readwise.assert_called_once_with(
-            mock_formatted
-        )
+        mock_readwise.post_zotero_annotations_to_readwise.assert_called_once_with(mock_formatted)
 
     @patch("zotero2readwise.zt2rw.get_zotero_client")
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_run_with_items(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test running sync with provided items."""
         mock_client = Mock()
@@ -293,7 +337,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_run_with_write_failures_true(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test that failed items are saved when write_failures=True."""
         mock_client = Mock()
@@ -318,15 +367,18 @@ class TestZotero2Readwise:
 
         zt_rw.run(provided_items)
 
-        mock_zotero.save_failed_items_to_json.assert_called_once_with(
-            "failed_zotero_items.json"
-        )
+        mock_zotero.save_failed_items_to_json.assert_called_once_with("failed_zotero_items.json")
 
     @patch("zotero2readwise.zt2rw.get_zotero_client")
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_run_with_write_failures_false(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test that failed items are NOT saved when write_failures=False."""
         mock_client = Mock()
@@ -357,7 +409,12 @@ class TestZotero2Readwise:
     @patch("zotero2readwise.zt2rw.Readwise")
     @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
     def test_run_with_unicode_items(
-        self, mock_zan_class, mock_rw_class, mock_get_client, zotero_credentials, readwise_token
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
     ):
         """Test running sync with Unicode items (issue #90)."""
         mock_client = Mock()

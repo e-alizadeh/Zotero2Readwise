@@ -1,13 +1,12 @@
 """Tests for Zotero module."""
 
-import json
+from unittest.mock import mock_open, patch
+
 import pytest
-from unittest.mock import Mock, patch, mock_open, MagicMock
-from pathlib import Path
 
 from zotero2readwise.zotero import (
-    ZoteroItem,
     ZoteroAnnotationsNotes,
+    ZoteroItem,
     get_zotero_client,
 )
 
@@ -125,9 +124,7 @@ class TestGetZoteroClient:
     @patch("zotero2readwise.zotero.Zotero")
     def test_get_zotero_client_with_params(self, mock_zotero_class):
         """Test getting Zotero client with provided parameters."""
-        client = get_zotero_client(
-            library_id="123456", api_key="test_key", library_type="user"
-        )
+        client = get_zotero_client(library_id="123456", api_key="test_key", library_type="user")
 
         mock_zotero_class.assert_called_once_with(
             library_id="123456", library_type="user", api_key="test_key"
@@ -162,9 +159,7 @@ class TestGetZoteroClient:
     def test_get_zotero_client_invalid_library_type(self, mock_zotero_class):
         """Test error with invalid library_type."""
         with pytest.raises(ValueError, match="library_type value can either be"):
-            get_zotero_client(
-                library_id="123456", api_key="test_key", library_type="invalid"
-            )
+            get_zotero_client(library_id="123456", api_key="test_key", library_type="invalid")
 
 
 class TestZoteroAnnotationsNotes:
@@ -193,7 +188,10 @@ class TestZoteroAnnotationsNotes:
         mock_zotero_client.item.return_value = sample_parent_item
 
         zan = ZoteroAnnotationsNotes(
-            mock_zotero_client, filter_colors=[], filter_tags=[], include_filter_tags=False
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
         )
 
         metadata = zan.get_item_metadata(sample_zotero_annotation)
@@ -210,7 +208,10 @@ class TestZoteroAnnotationsNotes:
         mock_zotero_client.item.return_value = sample_parent_item
 
         zan = ZoteroAnnotationsNotes(
-            mock_zotero_client, filter_colors=[], filter_tags=[], include_filter_tags=False
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
         )
 
         formatted = zan.format_item(sample_zotero_annotation)
@@ -221,14 +222,15 @@ class TestZoteroAnnotationsNotes:
         assert formatted.comment == "This is a comment"
         assert formatted.item_type == "annotation"
 
-    def test_format_item_note(
-        self, mock_zotero_client, sample_zotero_note, sample_parent_item
-    ):
+    def test_format_item_note(self, mock_zotero_client, sample_zotero_note, sample_parent_item):
         """Test formatting a note."""
         mock_zotero_client.item.return_value = sample_parent_item
 
         zan = ZoteroAnnotationsNotes(
-            mock_zotero_client, filter_colors=[], filter_tags=[], include_filter_tags=False
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
         )
 
         formatted = zan.format_item(sample_zotero_note)
@@ -239,9 +241,7 @@ class TestZoteroAnnotationsNotes:
         assert formatted.comment == ""
         assert formatted.item_type == "note"
 
-    def test_format_items_with_failures(
-        self, mock_zotero_client, sample_zotero_annotation
-    ):
+    def test_format_items_with_failures(self, mock_zotero_client, sample_zotero_annotation):
         """Test formatting items with some failures."""
         # Create a bad annotation that will cause an error
         bad_annotation = sample_zotero_annotation.copy()
@@ -250,7 +250,10 @@ class TestZoteroAnnotationsNotes:
         mock_zotero_client.item.side_effect = Exception("API Error")
 
         zan = ZoteroAnnotationsNotes(
-            mock_zotero_client, filter_colors=[], filter_tags=[], include_filter_tags=False
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
         )
 
         formatted = zan.format_items([sample_zotero_annotation, bad_annotation])
@@ -278,7 +281,10 @@ class TestZoteroAnnotationsNotes:
     def test_save_failed_items_to_json(self, mock_zotero_client, tmp_path):
         """Test saving failed items to JSON."""
         zan = ZoteroAnnotationsNotes(
-            mock_zotero_client, filter_colors=[], filter_tags=[], include_filter_tags=False
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
         )
 
         zan.failed_items = [
@@ -308,7 +314,10 @@ class TestZoteroAnnotationsNotes:
         mock_zotero_client.item.return_value = sample_parent_item
 
         zan = ZoteroAnnotationsNotes(
-            mock_zotero_client, filter_colors=[], filter_tags=[], include_filter_tags=False
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
         )
 
         formatted = zan.format_items([sample_zotero_annotation])
