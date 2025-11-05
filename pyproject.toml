@@ -1,29 +1,51 @@
-[tool.poetry]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
 name = "zotero2readwise"
 version = "1.2.0"
 description = "Export your Zotero annotations and notes to Readwise"
 readme = "README.md"
-authors = ["ealizadeh <hello@ealizadeh.com>"]
-license = "MIT"
-homepage = "https://github.com/e-alizadeh/Zotero2Readwise"
-repository = "https://github.com/e-alizadeh/Zotero2Readwise"
-documentation = "https://github.com/e-alizadeh/Zotero2Readwise"
-keywords = [
-    "Zotero",
-    "Readwise",
+license = { text = "MIT" }
+authors = [
+    { name = "ealizadeh", email = "hello@ealizadeh.com" }
 ]
+requires-python = ">=3.12"
+keywords = ["Zotero", "Readwise"]
 classifiers = [
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Utilities",
-    "Development Status :: 3 - Alpha"
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "Pyzotero>=1.4.26",
+    "requests>=2.26.0",
+    "python-dotenv<1.1.0",
 ]
 
-packages = [
-    { include = "zotero2readwise"}
+[project.optional-dependencies]
+dev = [
+    "ipython>=8.10.0",
+    "pre-commit>=3.5.0",
+    "ipdb>=0.13.13",
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/e-alizadeh/Zotero2Readwise"
+Repository = "https://github.com/e-alizadeh/Zotero2Readwise"
+Documentation = "https://github.com/e-alizadeh/Zotero2Readwise"
+
+[project.scripts]
+run = "zotero2readwise.run:main"
 
 [tool.semantic_release]
 version_variables = [
@@ -32,35 +54,20 @@ version_variables = [
 ]
 
 [tool.semantic_release.remote.token]
-env = "GH_TOKEN" # default env name containing the GitHub Token
-
-[tool.poetry.dependencies]
-python = "^3.8"
-Pyzotero = "^1.4.26"
-requests = "^2.26.0"
-setuptools = ">= 45"  # necessary for python 3.12
-python-dotenv = "<1.1.0"
-
-[tool.poetry.group.dev.dependencies]
-ipython = "^7.32.0"
-pre-commit = "^2.16.0"
-ipdb = "^0.13.9"
-
-[tool.poetry.scripts]
-run = "zotero2readwise.run:main"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+env = "GH_TOKEN"
 
 [tool.black]
 line-length = 100
+target-version = ["py312"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.12"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -77,8 +84,35 @@ ignore = [
 ]
 fix = true
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["zotero2readwise"]
 
-[tool.ruff.pydocstyle]
-convention="google"
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--cov=zotero2readwise",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+
+[tool.coverage.run]
+source = ["zotero2readwise"]
+omit = ["tests/*", "*/test_*.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

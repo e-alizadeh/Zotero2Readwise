@@ -67,8 +67,8 @@ class Readwise:
             error_log_file = (
                 f"error_log_{resp.status_code}_failed_post_request_to_readwise.json"
             )
-            with open(error_log_file, "w") as f:
-                dump(resp.json(), f)
+            with open(error_log_file, "w", encoding="utf-8") as f:
+                dump(resp.json(), f, indent=4, ensure_ascii=False)
             raise Zotero2ReadwiseError(
                 f"Uploading to Readwise failed with following details:\n"
                 f"POST request Status Code={resp.status_code} ({resp.reason})\n"
@@ -165,8 +165,8 @@ class Readwise:
         else:
             out_filepath = FAILED_ITEMS_DIR.joinpath("failed_readwise_items.json")
 
-        with open(out_filepath, "w") as f:
-            dump(self.failed_highlights, f)
+        with open(out_filepath, "w", encoding="utf-8") as f:
+            dump(self.failed_highlights, f, indent=4, ensure_ascii=False)
         print(
             f"{len(self.failed_highlights)} highlights failed to format (hence failed to upload to Readwise).\n"
             f"Detail of failed items are saved into {out_filepath}"

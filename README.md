@@ -24,13 +24,36 @@ Moreover, It has an automated [Spaced Repition](https://en.wikipedia.org/wiki/Sp
 ---
 
 
-# Installation 
-You can install the library by running 
+# Installation
+
+## Using pip (recommended for users)
+You can install the library by running:
 ```shell
 pip install zotero2readwise
 ```
 
 Note: If you do not have pip installed on your system, you can follow the instructions [here](https://pip.pypa.io/en/stable/installation/).
+
+## For Development
+
+This project uses [uv](https://github.com/astral-sh/uv) for dependency management and requires Python 3.12 or higher.
+
+### Install uv
+```shell
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Clone and setup the repository
+```shell
+git clone https://github.com/e-alizadeh/Zotero2Readwise.git
+cd Zotero2Readwise
+uv sync --all-extras  # Install all dependencies including dev tools
+```
+
+### Run tests
+```shell
+uv run pytest  # Run all tests with coverage
+```
 
 
 # Usage
