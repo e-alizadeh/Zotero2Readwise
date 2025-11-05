@@ -32,8 +32,7 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: 🔧 Install dependencies
-        run: |
-          uv sync --all-extras
+        run: uv sync --all-extras
 
       - name: 🐍 Python Semantic Release
         id: srelease
@@ -50,8 +49,7 @@ jobs:
 
       - name: 🛠️ Build distributions with uv
         if: steps.srelease.outputs.released == 'true'
-        run: |
-          uv build
+        run: uv build
 
       - name: 🚀 Publish to PyPI
         if: steps.srelease.outputs.released == 'true'

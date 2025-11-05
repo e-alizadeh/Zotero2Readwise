@@ -35,12 +35,10 @@ jobs:
           enable-cache: true
 
       - name: 🔧 Install dependencies
-        run: |
-          uv sync --all-extras
+        run: uv sync --all-extras
 
       - name: 🧪 Run tests with pytest
-        run: |
-          uv run pytest -v --cov=zotero2readwise --cov-report=xml --cov-report=term
+        run: uv run pytest -v --cov=zotero2readwise --cov-report=xml --cov-report=term
 
       - name: 📊 Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -69,20 +67,16 @@ jobs:
           enable-cache: true
 
       - name: 🔧 Install dependencies
-        run: |
-          uv sync --all-extras
+        run: uv sync --all-extras
 
       - name: 🎨 Check code formatting with black
-        run: |
-          uv run black --check .
+        run: uv run black --check .
 
       - name: 🔍 Lint with ruff
-        run: |
-          uv run ruff check .
+        run: uv run ruff check .
 
       - name: 🔬 Type check with mypy
-        run: |
-          uv run mypy zotero2readwise
+        run: uv run mypy zotero2readwise
         continue-on-error: true
 
   build:
@@ -103,8 +97,7 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: 🏗️ Build package
-        run: |
-          uv build
+        run: uv build
 
       - name: 📤 Upload build artifacts
         uses: actions/upload-artifact@v4
