@@ -64,8 +64,18 @@ class Readwise:
         )
         if resp.status_code != 200:
             error_log_file = f"error_log_{resp.status_code}_failed_post_request_to_readwise.json"
+            # Handle empty or invalid JSON responses gracefully
+            try:
+                error_content = (
+                    resp.json() if resp.text.strip() else {"error": "Empty response body"}
+                )
+            except ValueError:
+                error_content = {
+                    "error": "Invalid JSON response",
+                    "raw_response": resp.text[:500],
+                }
             with open(error_log_file, "w", encoding="utf-8") as f:
-                dump(resp.json(), f, indent=4, ensure_ascii=False)
+                dump(error_content, f, indent=4, ensure_ascii=False)
             raise Zotero2ReadwiseError(
                 f"Uploading to Readwise failed with following details:\n"
                 f"POST request Status Code={resp.status_code} ({resp.reason})\n"
@@ -127,11 +137,21 @@ class Readwise:
                         f"version={annot.version}) cannot be uploaded since the highlight/note is very long. "
                         f"A Readwise highlight can be up to 8191 characters."
                     )
-                    self.failed_highlights.append(annot.get_nonempty_params())
+                    failed_item = annot.get_nonempty_params()
+                    failed_item["error_type"] = "CharacterLimitExceeded"
+                    failed_item["error_message"] = (
+                        f"Highlight exceeds 8191 character limit ({len(annot.text)} chars)"
+                    )
+                    self.failed_highlights.append(failed_item)
                     continue  # Go to next annot
                 rw_highlight = self.convert_zotero_annotation_to_readwise_highlight(annot)
-            except:
-                self.failed_highlights.append(annot.get_nonempty_params())
+            except Exception as e:
+                # Store failed item with error details for better debugging
+                failed_item = annot.get_nonempty_params()
+                failed_item["error_type"] = type(e).__name__
+                failed_item["error_message"] = str(e)
+                self.failed_highlights.append(failed_item)
+                print(f"Warning: Failed to convert item {annot.key}: {type(e).__name__}: {e}")
                 continue  # Go to next annot
             rw_highlights.append(rw_highlight.get_nonempty_params())
         self.create_highlights(rw_highlights)

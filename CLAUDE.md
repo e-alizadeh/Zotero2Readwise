@@ -66,7 +66,7 @@ nix run github:e-alizadeh/Zotero2Readwise -- <readwise_token> <zotero_key> <zote
 
 ### Configuration Options
 - `include_annotations`: Include Zotero highlights/comments (default: True)
-- `include_notes`: Include Zotero standalone notes (default: False)  
+- `include_notes`: Include Zotero standalone notes (default: False)
 - `filter_colors`: Filter annotations by highlight color
 - `since`: Only sync items modified after timestamp
 - `zotero_library_type`: "user" (personal) or "group" library

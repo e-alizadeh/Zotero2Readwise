@@ -263,8 +263,16 @@ class ZoteroAnnotationsNotes:
                 )
                 if color_condition and tag_condition:
                     formatted_annots.append(self.format_item(annot))
-            except:
-                self.failed_items.append(annot)
+            except Exception as e:
+                # Store failed item with error details for better debugging
+                failed_item = {
+                    "item": annot,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                }
+                self.failed_items.append(failed_item)
+                item_key = annot.get("data", {}).get("key", "unknown")
+                print(f"Warning: Failed to format item {item_key}: {type(e).__name__}: {e}")
                 continue
 
         finished_msg = "\nZOTERO: Formatting Zotero Items is completed!!\n\n"

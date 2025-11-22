@@ -1,0 +1,53 @@
+# Example Automation Workflow for Zotero2Readwise
+#
+# This is a SAMPLE workflow for users who want to automatically sync
+# their Zotero annotations to Readwise on a schedule.
+#
+# SETUP INSTRUCTIONS:
+# 1. Fork this repository (or copy this file to your own repo)
+# 2. Rename this file to 'automation.yaml' (remove '-example' suffix)
+# 3. Add the following secrets to your repository:
+#    - READWISE_TOKEN: Your Readwise API token
+#    - ZOTERO_KEY: Your Zotero API key
+#    - ZOTERO_ID: Your Zotero user/library ID
+# 4. (Optional) Adjust the cron schedule below
+#
+# IMPORTANT: Secrets must be properly quoted to avoid shell interpretation issues
+# See: https://github.com/e-alizadeh/Zotero2Readwise/issues/72
+
+name: Sync Zotero to Readwise
+
+on:
+  # Run on a schedule (default: daily at 6 AM UTC)
+  schedule:
+    - cron: '0 6 * * *'
+
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync Zotero Annotations to Readwise
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run Zotero2Readwise sync
+        # IMPORTANT: Secrets MUST be quoted to prevent shell interpretation issues
+        # Without quotes, special characters in tokens can cause "command not found" errors
+        run: |
+          uv run python -m zotero2readwise.run \
+            "${{ secrets.READWISE_TOKEN }}" \
+            "${{ secrets.ZOTERO_KEY }}" \
+            "${{ secrets.ZOTERO_ID }}"

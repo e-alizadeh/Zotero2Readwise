@@ -1,12 +1,10 @@
 """Tests for helper functions."""
 
-import os
-import pytest
-from pathlib import Path
-from unittest.mock import Mock, patch, mock_open
+from unittest.mock import mock_open, patch
+
 from zotero2readwise.helper import (
-    sanitize_tag,
     read_library_version,
+    sanitize_tag,
     write_library_version,
 )
 
