@@ -108,14 +108,52 @@ The text file with failed highlights, which usually would be written to the Zote
 If you don't want this file created, supply `--suppress_failures` as an additional argument.
 
 ---
-# [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync)
+# Automated Sync with GitHub Actions
 
 ### 👉 Set up a scheduled automation once and forget about it!
 
-You can fork my repo [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync) repository that contain
+You can fork my repo [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync) repository that contains
 the cronjob (time-based Job scheduler) using GitHub actions to automatically retrieve all your Zotero annotations/notes,
 and then push them to Readwise.
 You can use the forked repo without even changing a single line (of course if you're happy with the default settings!)
+
+## Custom GitHub Actions Workflow
+
+Alternatively, you can set up your own GitHub Actions workflow. Create `.github/workflows/automation.yaml` in your fork:
+
+```yaml
+name: Sync Zotero to Readwise
+
+on:
+  # Run on a schedule (daily at 6 AM UTC)
+  schedule:
+    - cron: '0 6 * * *'
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - run: uv python install 3.12
+      - run: uv sync
+      - name: Run Zotero2Readwise sync
+        # IMPORTANT: Secrets MUST be quoted to prevent shell interpretation issues
+        run: |
+          uv run python -m zotero2readwise.run \
+            "${{ secrets.READWISE_TOKEN }}" \
+            "${{ secrets.ZOTERO_KEY }}" \
+            "${{ secrets.ZOTERO_ID }}"
+```
+
+**Required secrets** (add in your repo's Settings → Secrets → Actions):
+- `READWISE_TOKEN`: Your Readwise API token
+- `ZOTERO_KEY`: Your Zotero API key
+- `ZOTERO_ID`: Your Zotero user/library ID
+
+> **Note**: Always quote the secrets (`"${{ secrets.* }}"`) to avoid shell interpretation errors (see [#72](https://github.com/e-alizadeh/Zotero2Readwise/issues/72)).
 
 # Request a new feature or report a bug
 Feel free to request a new feature or report a bug in GitHub issue [here](https://github.com/e-alizadeh/Zotero2Readwise/issues).
