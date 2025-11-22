@@ -1,6 +1,39 @@
 # CHANGELOG
 
 
+## v1.3.1 (2025-11-22)
+
+### Bug Fixes
+
+- Resolve issues #82, #44, and #72
+  ([`903bf74`](https://github.com/e-alizadeh/Zotero2Readwise/commit/903bf74d8b2ee3ca8e0b0689922043d5bdc694e5))
+
+- Fix #82: Handle empty/invalid JSON responses in Readwise API calls - Gracefully handle empty
+  response bodies instead of crashing - Capture raw response text for debugging invalid JSON
+
+- Fix #44: Improve error reporting for failed items - Replace bare except blocks with Exception
+  handling - Add error_type and error_message to failed items for debugging - Print warnings when
+  items fail to format or convert
+
+- Address #72: Add sample automation workflow - Create automation-example.yaml for users to set up
+  scheduled syncs - Include proper secret quoting to avoid shell interpretation issues - Add
+  workflow_dispatch for manual triggering
+
+Also includes code style fixes from pre-commit hooks.
+
+### Documentation
+
+- Move automation workflow example to README.md
+  ([`aae821d`](https://github.com/e-alizadeh/Zotero2Readwise/commit/aae821d2d5c562940e4481164d3c46b80e20b80e))
+
+- Remove separate automation-example.yaml file - Add GitHub Actions workflow example directly in
+  README - Include setup instructions and required secrets - Reference issue #72 for secret quoting
+  requirement
+
+- Remove custom workflow section from README
+  ([`0ab4604`](https://github.com/e-alizadeh/Zotero2Readwise/commit/0ab460453cb03d2b4c30eb9515c7107e937decf3))
+
+
 ## v1.3.0 (2025-11-05)
 
 ### Bug Fixes

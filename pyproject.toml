@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "zotero2readwise"
-version = "1.3.0"
+version = "1.3.1"
 description = "Export your Zotero annotations and notes to Readwise"
 readme = "README.md"
 license = { text = "MIT" }
