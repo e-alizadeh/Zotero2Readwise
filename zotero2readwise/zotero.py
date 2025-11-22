@@ -28,6 +28,7 @@ class ZoteroItem:
     page_label: str | None = None
     color: str | None = None
     relations: dict | None = field(init=True, default=None)
+    sort_index: str | None = None  # For ordering annotations within a document
 
     def __post_init__(self):
         # Convert [{'tag': 'abc'}, {'tag': 'def'}] -->  ['abc', 'def']
@@ -243,6 +244,7 @@ class ZoteroAnnotationsNotes:
             page_label=data.get("annotationPageLabel"),
             color=data.get("annotationColor"),
             relations=data["relations"],
+            sort_index=data.get("annotationSortIndex"),
         )
 
     def format_items(self, annots: list[dict]) -> list[ZoteroItem]:
@@ -282,6 +284,11 @@ class ZoteroAnnotationsNotes:
                 f"You can run `save_failed_items_to_json()` class method to save those items."
             )
         print(finished_msg)
+
+        # Sort annotations by title first, then by sort_index for proper ordering within each document
+        # sort_index format: "pageIndex|charOffset|position" (e.g., "00008|000412|00574")
+        formatted_annots.sort(key=lambda x: (x.title or "", x.sort_index or ""))
+
         return formatted_annots
 
     def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
