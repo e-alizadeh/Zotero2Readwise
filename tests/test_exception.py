@@ -1,6 +1,7 @@
 """Tests for custom exceptions."""
 
 import pytest
+
 from zotero2readwise.exception import Zotero2ReadwiseError
 
 

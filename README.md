@@ -108,14 +108,15 @@ The text file with failed highlights, which usually would be written to the Zote
 If you don't want this file created, supply `--suppress_failures` as an additional argument.
 
 ---
-# [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync)
+# Automated Sync with GitHub Actions
 
 ### 👉 Set up a scheduled automation once and forget about it!
 
-You can fork my repo [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync) repository that contain
+You can fork my repo [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync) repository that contains
 the cronjob (time-based Job scheduler) using GitHub actions to automatically retrieve all your Zotero annotations/notes,
 and then push them to Readwise.
 You can use the forked repo without even changing a single line (of course if you're happy with the default settings!)
+
 
 # Request a new feature or report a bug
 Feel free to request a new feature or report a bug in GitHub issue [here](https://github.com/e-alizadeh/Zotero2Readwise/issues).

@@ -1,8 +1,8 @@
 """Pytest configuration and shared fixtures."""
 
+from unittest.mock import Mock
+
 import pytest
-from unittest.mock import Mock, MagicMock
-from datetime import datetime
 
 
 @pytest.fixture
@@ -33,9 +33,7 @@ def sample_zotero_annotation():
             "tags": [{"tag": "important"}, {"tag": "machine learning"}],
             "relations": {},
         },
-        "links": {
-            "alternate": {"href": "https://www.zotero.org/users/123/items/ABC123"}
-        },
+        "links": {"alternate": {"href": "https://www.zotero.org/users/123/items/ABC123"}},
     }
 
 
@@ -55,9 +53,7 @@ def sample_zotero_note():
             "tags": [{"tag": "note"}],
             "relations": {},
         },
-        "links": {
-            "alternate": {"href": "https://www.zotero.org/users/123/items/NOTE123"}
-        },
+        "links": {"alternate": {"href": "https://www.zotero.org/users/123/items/NOTE123"}},
     }
 
 

@@ -1,4 +1,4 @@
-from typing import Dict, List, Sequence
+from collections.abc import Sequence
 
 from zotero2readwise.readwise import Readwise
 from zotero2readwise.zotero import (
@@ -36,7 +36,7 @@ class Zotero2Readwise:
         self.since = since
         self.write_failures = write_failures
 
-    def get_all_zotero_items(self) -> List[Dict]:
+    def get_all_zotero_items(self) -> list[dict]:
         """
         Retrieves all Zotero items of the specified types (notes and/or annotations) that were modified since the specified date.
 
@@ -54,7 +54,7 @@ class Zotero2Readwise:
 
         return items
 
-    def run(self, zot_annots_notes: List[Dict] = None) -> None:
+    def run(self, zot_annots_notes: list[dict] = None) -> None:
         if zot_annots_notes is None:
             zot_annots_notes = self.get_all_zotero_items()
 
