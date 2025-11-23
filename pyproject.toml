@@ -45,7 +45,7 @@ Repository = "https://github.com/e-alizadeh/Zotero2Readwise"
 Documentation = "https://github.com/e-alizadeh/Zotero2Readwise"
 
 [project.scripts]
-run = "zotero2readwise.run:main"
+zotero2readwise = "zotero2readwise.run:main"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]

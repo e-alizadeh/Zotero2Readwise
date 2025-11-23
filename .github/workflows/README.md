@@ -4,6 +4,30 @@ This repository uses GitHub Actions for continuous integration and automated rel
 
 ## Workflows
 
+### 🔄 Automation Example (`automation-example.yaml`)
+
+A ready-to-use workflow for automating Zotero to Readwise sync. Copy this to your own repository!
+
+**Usage:**
+
+1. Create a new repository (e.g., `Zotero2Readwise-Sync`)
+2. Copy `automation-example.yaml` to `.github/workflows/`
+3. Add the required secrets to your repository settings
+
+**Required Secrets:**
+
+- `READWISE_TOKEN` - Readwise access token ([get one here](https://readwise.io/access_token))
+- `ZOTERO_KEY` - Zotero API key ([get one here](https://www.zotero.org/settings/keys))
+- `ZOTERO_LIBRARY_ID` - Zotero user/library ID (same page as API key)
+
+**Features:**
+
+- Uses `uv` for fast, reliable Python package installation
+- Runs via `uvx zotero2readwise` - no checkout or manual setup needed
+- Secure: credentials passed via environment variables, not CLI arguments
+- Scheduled weekly (configurable via cron)
+- Manual trigger via workflow_dispatch
+
 ### 🧪 Test Workflow (`test.yaml`)
 
 Runs on every push and pull request to ensure code quality.
