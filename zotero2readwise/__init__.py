@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 __author__ = "Essi Alizadeh"
-__version__ = "1.4.1"
+__version__ = "1.4.2"
 
 TOP_DIR = Path(__file__).parent
 # If TOP_DIR is readonly os with nix,

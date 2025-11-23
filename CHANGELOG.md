@@ -1,6 +1,37 @@
 # CHANGELOG
 
 
+## v1.4.2 (2025-11-23)
+
+### Bug Fixes
+
+- Resolve lint errors for mypy, ruff, and code style
+  ([`38a56bf`](https://github.com/e-alizadeh/Zotero2Readwise/commit/38a56bfac756c35de19d503d5883b2fe5a8f4d63))
+
+- Fix mypy type annotation errors by adding `| None` to optional params: - zotero.py:
+  get_zotero_client() params, save_failed_items_to_json() - readwise.py:
+  convert_tags_to_readwise_format(), save_failed_items_to_json() - zt2rw.py: run() zot_annots_notes
+  parameter - Fix document_type annotation from int to str in ZoteroItem - Fix ruff B904: Add `from
+  None` to raise statements in except blocks - Fix ruff F841: Prefix unused variables with
+  underscore in tests - Add noqa comment for E402 in test_integration.py - Handle None tags in
+  convert_tags_to_readwise_format()
+
+All 159 tests pass with 96% coverage.
+
+### Documentation
+
+- Add comprehensive docstrings and extensive test coverage
+  ([`7c2d68c`](https://github.com/e-alizadeh/Zotero2Readwise/commit/7c2d68c46f36bb684d0ad3447ba717f9d0cd57e2))
+
+- Add Google-style docstrings to all modules: zt2rw.py, zotero.py, readwise.py, exception.py,
+  run.py, helper.py - Create test_run.py with comprehensive CLI tests (strtobool, argument parsing,
+  environment variables) - Add 60+ new edge case tests covering: - Color/tag filtering and
+  include_filter_tags behavior - Unsupported annotation types (ink, image) - Empty text handling and
+  error cases - Metadata caching verification - Custom tag support in Readwise - Character limit
+  handling (8191 chars) - Unicode/Chinese text support - Empty response and invalid JSON handling -
+  Group library type support - Test coverage increased to 98% (159 tests passing)
+
+
 ## v1.4.1 (2025-11-23)
 
 ### Bug Fixes
