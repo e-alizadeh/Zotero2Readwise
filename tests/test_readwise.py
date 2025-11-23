@@ -389,3 +389,247 @@ class TestReadwise:
         assert "张三" in highlight.author or highlight.author == "张三"
         assert ".机器学习" in highlight.note
         assert "中文评论" in highlight.note
+
+    def test_initialization_with_custom_tag(self, readwise_token):
+        """Test Readwise initialization with custom tag."""
+        rw = Readwise(readwise_token, custom_tag="zotero")
+
+        assert rw.custom_tag == "zotero"
+
+    def test_format_readwise_note_with_custom_tag(self, readwise_token):
+        """Test formatting note with custom tag."""
+        rw = Readwise(readwise_token, custom_tag="zotero")
+
+        result = rw.format_readwise_note(["tag1"], "My comment")
+
+        assert ".zotero" in result
+        assert ".tag1" in result
+        assert "My comment" in result
+
+    def test_format_readwise_note_custom_tag_only(self, readwise_token):
+        """Test formatting note with only custom tag (no other tags or comment)."""
+        rw = Readwise(readwise_token, custom_tag="zotero")
+
+        result = rw.format_readwise_note([], None)
+
+        assert ".zotero" in result
+
+    def test_format_readwise_note_custom_tag_with_empty_tags(self, readwise_token):
+        """Test formatting note with custom tag and empty tags list."""
+        rw = Readwise(readwise_token, custom_tag="zotero")
+
+        result = rw.format_readwise_note([], "Comment only")
+
+        assert ".zotero" in result
+        assert "Comment only" in result
+
+    def test_convert_zotero_annotation_non_numeric_page(self, readwise_token):
+        """Test conversion when page_label is not numeric."""
+        rw = Readwise(readwise_token)
+
+        zotero_item = ZoteroItem(
+            key="ABC123",
+            version=100,
+            item_type="annotation",
+            text="Sample highlight",
+            annotated_at="2023-01-01T12:00:00Z",
+            annotation_url="https://www.zotero.org/users/123/items/ABC123",
+            title="Sample Paper",
+            tags=[],
+            document_type="journalArticle",
+            source_url="https://example.com",
+            page_label="xii",  # Roman numeral
+        )
+
+        highlight = rw.convert_zotero_annotation_to_readwise_highlight(zotero_item)
+
+        # Should default to 0 for non-numeric page labels
+        assert highlight.location is None  # 0 becomes None in post_init
+
+    def test_convert_zotero_annotation_no_attachment(self, readwise_token):
+        """Test conversion when there's no attachment URL."""
+        rw = Readwise(readwise_token)
+
+        zotero_item = ZoteroItem(
+            key="ABC123",
+            version=100,
+            item_type="annotation",
+            text="Sample highlight",
+            annotated_at="2023-01-01T12:00:00Z",
+            annotation_url="https://www.zotero.org/users/123/items/ABC123",
+            title="Sample Paper",
+            tags=[],
+            document_type="journalArticle",
+            source_url="https://example.com",
+            attachment_url=None,
+        )
+
+        highlight = rw.convert_zotero_annotation_to_readwise_highlight(zotero_item)
+
+        # Should use annotation_url as highlight_url when no attachment
+        assert highlight.highlight_url == "https://www.zotero.org/users/123/items/ABC123"
+
+    @patch("zotero2readwise.readwise.requests.post")
+    def test_create_highlights_empty_response(self, mock_post, readwise_token):
+        """Test handling of empty response body from API."""
+        mock_response = Mock()
+        mock_response.status_code = 500
+        mock_response.reason = "Internal Server Error"
+        mock_response.text = ""
+        mock_post.return_value = mock_response
+
+        rw = Readwise(readwise_token)
+        highlights = [{"text": "Sample highlight"}]
+
+        m = mock_open()
+        with patch("builtins.open", m):
+            with pytest.raises(Zotero2ReadwiseError, match="Uploading to Readwise failed"):
+                rw.create_highlights(highlights)
+
+    @patch("zotero2readwise.readwise.requests.post")
+    def test_create_highlights_invalid_json_response(self, mock_post, readwise_token):
+        """Test handling of invalid JSON response from API."""
+        mock_response = Mock()
+        mock_response.status_code = 500
+        mock_response.reason = "Internal Server Error"
+        mock_response.text = "Not valid JSON"
+        mock_response.json.side_effect = ValueError("Invalid JSON")
+        mock_post.return_value = mock_response
+
+        rw = Readwise(readwise_token)
+        highlights = [{"text": "Sample highlight"}]
+
+        m = mock_open()
+        with patch("builtins.open", m):
+            with pytest.raises(Zotero2ReadwiseError, match="Uploading to Readwise failed"):
+                rw.create_highlights(highlights)
+
+    @patch("zotero2readwise.readwise.requests.post")
+    def test_post_zotero_annotations_handles_conversion_error(self, mock_post, readwise_token):
+        """Test that conversion errors are handled gracefully."""
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+
+        rw = Readwise(readwise_token)
+
+        # Create an item that will cause an error during conversion
+        # by having tags that can't be processed
+        bad_item = ZoteroItem(
+            key="BAD123",
+            version=100,
+            item_type="annotation",
+            text="Sample text",
+            annotated_at="2023-01-01T12:00:00Z",
+            annotation_url="https://www.zotero.org/users/123/items/BAD123",
+            title="Sample Paper",
+            tags=None,  # This should be handled gracefully
+            document_type="journalArticle",
+            source_url="https://example.com",
+        )
+
+        # This should not raise an exception
+        rw.post_zotero_annotations_to_readwise([bad_item])
+
+        # Should have been posted successfully
+        mock_post.assert_called_once()
+
+    def test_readwise_highlight_defaults(self):
+        """Test ReadwiseHighlight default values."""
+        highlight = ReadwiseHighlight(text="Just text")
+
+        assert highlight.text == "Just text"
+        assert highlight.title is None
+        assert highlight.author is None
+        assert highlight.location is None  # 0 becomes None
+        assert highlight.location_type == "page"
+
+    @patch("zotero2readwise.readwise.requests.post")
+    def test_post_multiple_annotations(self, mock_post, readwise_token):
+        """Test posting multiple annotations at once."""
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+
+        rw = Readwise(readwise_token)
+
+        annotations = [
+            ZoteroItem(
+                key=f"KEY{i}",
+                version=100,
+                item_type="annotation",
+                text=f"Highlight {i}",
+                annotated_at="2023-01-01T12:00:00Z",
+                annotation_url=f"https://www.zotero.org/users/123/items/KEY{i}",
+                title="Sample Paper",
+                tags=[],
+                document_type="journalArticle",
+                source_url="https://example.com",
+            )
+            for i in range(5)
+        ]
+
+        rw.post_zotero_annotations_to_readwise(annotations)
+
+        # Should be called once with all highlights
+        mock_post.assert_called_once()
+        call_kwargs = mock_post.call_args[1]
+        assert len(call_kwargs["json"]["highlights"]) == 5
+
+    def test_save_failed_items_default_filename(self, readwise_token, tmp_path):
+        """Test saving failed highlights with default filename."""
+        rw = Readwise(readwise_token)
+        rw.failed_highlights = [{"key": "FAILED1"}]
+
+        m = mock_open()
+        with patch("builtins.open", m):
+            with patch("zotero2readwise.readwise.FAILED_ITEMS_DIR", tmp_path):
+                rw.save_failed_items_to_json()
+
+        # Should use default filename
+        assert "failed_readwise_items.json" in str(m.call_args)
+
+    def test_convert_tags_with_special_characters(self, readwise_token):
+        """Test converting tags with special characters."""
+        rw = Readwise(readwise_token)
+
+        tags = ["AI/ML", "C++", "Node.js"]
+        result = rw.convert_tags_to_readwise_format(tags)
+
+        # Should preserve special characters but sanitize spaces
+        assert ".ai/ml" in result
+        assert ".c++" in result
+        assert ".node.js" in result
+
+    @patch("zotero2readwise.readwise.requests.post")
+    def test_post_annotations_exactly_at_limit(self, mock_post, readwise_token):
+        """Test annotation exactly at 8191 character limit is accepted."""
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+
+        rw = Readwise(readwise_token)
+
+        # Create annotation with text at exactly 8190 characters (just under limit)
+        limit_text = "A" * 8190
+
+        annotations = [
+            ZoteroItem(
+                key="LIMIT123",
+                version=100,
+                item_type="annotation",
+                text=limit_text,
+                annotated_at="2023-01-01T12:00:00Z",
+                annotation_url="https://www.zotero.org/users/123/items/LIMIT123",
+                title="Sample Paper",
+                tags=[],
+                document_type="journalArticle",
+                source_url="https://example.com",
+            )
+        ]
+
+        rw.post_zotero_annotations_to_readwise(annotations)
+
+        # Should be uploaded successfully
+        mock_post.assert_called_once()
+        assert len(rw.failed_highlights) == 0

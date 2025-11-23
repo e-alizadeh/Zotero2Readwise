@@ -1,3 +1,19 @@
+"""Command-line interface for Zotero2Readwise.
+
+This module provides the CLI entry point for running the Zotero to Readwise
+synchronization from the command line.
+
+Example:
+    $ zotero2readwise <readwise_token> <zotero_key> <zotero_library_id>
+    $ zotero2readwise --include_notes y --filter_color "#ffd400"
+
+Environment Variables:
+    READWISE_TOKEN: Readwise API access token
+    ZOTERO_KEY: Zotero API key
+    ZOTERO_LIBRARY_ID: Zotero user or group library ID
+    ZOTERO_LIBRARY_TYPE: Library type ("user" or "group")
+"""
+
 from argparse import ArgumentParser
 from os import environ
 
@@ -5,7 +21,28 @@ from zotero2readwise.helper import read_library_version, write_library_version
 from zotero2readwise.zt2rw import Zotero2Readwise
 
 
-def strtobool(val):
+def strtobool(val: str) -> int:
+    """Convert a string representation of truth to 1 or 0.
+
+    This is a replacement for the deprecated distutils.util.strtobool.
+
+    Args:
+        val: String value to convert. Accepts 'y', 'yes', 't', 'true',
+            'on', '1' for True and 'n', 'no', 'f', 'false', 'off', '0'
+            for False (case-insensitive).
+
+    Returns:
+        1 for truthy values, 0 for falsy values.
+
+    Raises:
+        ValueError: If val is not a recognized truth value.
+
+    Example:
+        >>> strtobool("yes")
+        1
+        >>> strtobool("no")
+        0
+    """
     val = val.lower()
     if val in ("y", "yes", "t", "true", "on", "1"):
         return 1
@@ -15,7 +52,13 @@ def strtobool(val):
         raise ValueError(f"invalid truth value {val}")
 
 
-def main():
+def main() -> None:
+    """Main entry point for the Zotero2Readwise CLI.
+
+    Parses command-line arguments and environment variables, then runs
+    the synchronization process. Credentials can be provided either as
+    positional arguments or via environment variables.
+    """
     parser = ArgumentParser(
         description="Sync Zotero annotations and notes to Readwise",
         epilog="Credentials can be provided via arguments or environment variables "
@@ -117,7 +160,7 @@ def main():
         try:
             args[bool_arg] = bool(strtobool(args[bool_arg]))
         except ValueError:
-            raise ValueError(f"Invalid value for --{bool_arg}. Use 'n' or 'y' (default).")
+            raise ValueError(f"Invalid value for --{bool_arg}. Use 'n' or 'y' (default).") from None
 
     since = read_library_version() if args["use_since"] else 0
     zt2rw = Zotero2Readwise(

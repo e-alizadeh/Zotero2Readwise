@@ -1,28 +1,38 @@
+"""Helper utility functions for Zotero2Readwise.
+
+This module provides utility functions for tag sanitization and
+library version management (for incremental sync support).
+"""
+
+from pyzotero.zotero import Zotero
+
+
 def sanitize_tag(tag: str) -> str:
-    """Clean tag by replacing empty spaces with underscore.
+    """Clean tag by stripping whitespace and replacing spaces with underscores.
 
-    Parameters
-    ----------
-    tag: str
+    Args:
+        tag: The tag string to sanitize.
 
-    Returns
-    -------
-    str
-        Cleaned tag
+    Returns:
+        Cleaned tag with leading/trailing whitespace removed and
+        internal spaces replaced with underscores.
 
-    Examples
-    --------
-    >>> sanitize_tag(" Machine Learning ")
-    "Machine_Learning"
-
+    Example:
+        >>> sanitize_tag(" Machine Learning ")
+        'Machine_Learning'
     """
     return tag.strip().replace(" ", "_")
 
 
-def read_library_version():
-    """
-    Reads the library version from the 'since' file and returns it as an integer.
-    If the file does not exist or does not include a number, returns 0.
+def read_library_version() -> int:
+    """Read the library version from the 'since' file.
+
+    The 'since' file stores the last sync timestamp/version number,
+    enabling incremental syncs that only process new items.
+
+    Returns:
+        The library version as an integer, or 0 if the file doesn't
+        exist or contains invalid data.
     """
     try:
         with open("since", encoding="utf-8") as file:
@@ -34,15 +44,14 @@ def read_library_version():
     return 0
 
 
-def write_library_version(zotero_client):
-    """
-    Writes the library version of the given Zotero client to a file named 'since'.
+def write_library_version(zotero_client: Zotero) -> None:
+    """Write the current library version to the 'since' file.
+
+    Saves the last modified version from the Zotero client, enabling
+    future incremental syncs to start from this point.
 
     Args:
-        zotero_client: A Zotero client object.
-
-    Returns:
-        None
+        zotero_client: A Pyzotero Zotero client instance.
     """
     with open("since", "w", encoding="utf-8") as file:
         file.write(str(zotero_client.last_modified_version()))
