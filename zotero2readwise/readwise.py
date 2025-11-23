@@ -50,11 +50,12 @@ class ReadwiseHighlight:
 
 
 class Readwise:
-    def __init__(self, readwise_token: str):
+    def __init__(self, readwise_token: str, custom_tag: str | None = None):
         self._token = readwise_token
         self._header = {"Authorization": f"Token {self._token}"}
         self.endpoints = ReadwiseAPI
         self.failed_highlights: list = []
+        self.custom_tag = custom_tag
 
     def create_highlights(self, highlights: list[dict]) -> None:
         resp = requests.post(
@@ -89,8 +90,14 @@ class Readwise:
     def format_readwise_note(self, tags, comment) -> str | None:
         rw_tags = self.convert_tags_to_readwise_format(tags)
         highlight_note = ""
+        # Add custom tag first if specified
+        if self.custom_tag:
+            highlight_note += f".{sanitize_tag(self.custom_tag.lower())} "
         if rw_tags:
             highlight_note += rw_tags + "\n"
+        elif self.custom_tag:
+            # Add newline after custom tag if no other tags
+            highlight_note = highlight_note.rstrip() + "\n"
         if comment:
             highlight_note += comment
         return highlight_note if highlight_note else None

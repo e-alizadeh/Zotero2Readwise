@@ -40,7 +40,7 @@ class TestZotero2Readwise:
             library_type=zotero_credentials["library_type"],
             api_key=zotero_credentials["key"],
         )
-        mock_rw_class.assert_called_once_with(readwise_token)
+        mock_rw_class.assert_called_once_with(readwise_token, custom_tag=None)
         assert zt_rw.include_annots is True
         assert zt_rw.include_notes is False
 

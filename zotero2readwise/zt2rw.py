@@ -21,8 +21,9 @@ class Zotero2Readwise:
         include_filter_tags: bool = False,
         since: int = 0,
         write_failures: bool = True,
+        custom_tag: str | None = None,
     ):
-        self.readwise = Readwise(readwise_token)
+        self.readwise = Readwise(readwise_token, custom_tag=custom_tag)
         self.zotero_client = get_zotero_client(
             library_id=zotero_library_id,
             library_type=zotero_library_type,

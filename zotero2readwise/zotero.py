@@ -28,6 +28,7 @@ class ZoteroItem:
     page_label: str | None = None
     color: str | None = None
     relations: dict | None = field(init=True, default=None)
+    sort_index: str | None = None  # Zotero's annotationSortIndex for ordering
 
     def __post_init__(self):
         # Convert [{'tag': 'abc'}, {'tag': 'def'}] -->  ['abc', 'def']
@@ -243,6 +244,7 @@ class ZoteroAnnotationsNotes:
             page_label=data.get("annotationPageLabel"),
             color=data.get("annotationColor"),
             relations=data["relations"],
+            sort_index=data.get("annotationSortIndex"),
         )
 
     def format_items(self, annots: list[dict]) -> list[ZoteroItem]:
@@ -274,6 +276,11 @@ class ZoteroAnnotationsNotes:
                 item_key = annot.get("data", {}).get("key", "unknown")
                 print(f"Warning: Failed to format item {item_key}: {type(e).__name__}: {e}")
                 continue
+
+        # Sort annotations by title (grouping by document) and then by sort_index
+        # (reading order within each document). This ensures highlights appear
+        # in chronological sequence within each document in Readwise.
+        formatted_annots.sort(key=lambda x: (x.title or "", x.sort_index or ""))
 
         finished_msg = "\nZOTERO: Formatting Zotero Items is completed!!\n\n"
         if self.failed_items:
