@@ -1,10 +1,18 @@
 from argparse import ArgumentParser
 from os import environ
 
-from distutils.util import strtobool
-
 from zotero2readwise.helper import read_library_version, write_library_version
 from zotero2readwise.zt2rw import Zotero2Readwise
+
+
+def strtobool(val):
+    val = val.lower()
+    if val in ("y", "yes", "t", "true", "on", "1"):
+        return 1
+    elif val in ("n", "no", "f", "false", "off", "0"):
+        return 0
+    else:
+        raise ValueError(f"invalid truth value {val}")
 
 
 def main():
@@ -94,11 +102,15 @@ def main():
 
     # Validate required credentials
     if not args["readwise_token"]:
-        parser.error("readwise_token is required (provide as argument or set READWISE_TOKEN env var)")
+        parser.error(
+            "readwise_token is required (provide as argument or set READWISE_TOKEN env var)"
+        )
     if not args["zotero_key"]:
         parser.error("zotero_key is required (provide as argument or set ZOTERO_KEY env var)")
     if not args["zotero_library_id"]:
-        parser.error("zotero_library_id is required (provide as argument or set ZOTERO_LIBRARY_ID env var)")
+        parser.error(
+            "zotero_library_id is required (provide as argument or set ZOTERO_LIBRARY_ID env var)"
+        )
 
     # Cast str to bool values for bool flags
     for bool_arg in ["include_annotations", "include_notes"]:
