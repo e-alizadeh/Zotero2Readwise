@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.4.1 (2025-11-23)
+
+### Bug Fixes
+
+- :bug: Add custom `strtobool` function to replace `distutils.util.strtobool` import
+  ([`950cd27`](https://github.com/e-alizadeh/Zotero2Readwise/commit/950cd27bcbf058622cb74bcf9019247c9425ff3c))
+
+
 ## v1.4.0 (2025-11-23)
 
 ### Bug Fixes
