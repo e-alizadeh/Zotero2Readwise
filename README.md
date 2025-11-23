@@ -110,12 +110,41 @@ If you don't want this file created, supply `--suppress_failures` as an addition
 ---
 # Automated Sync with GitHub Actions
 
-### 👉 Set up a scheduled automation once and forget about it!
+### Set up a scheduled automation once and forget about it!
 
-You can fork my repo [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync) repository that contains
-the cronjob (time-based Job scheduler) using GitHub actions to automatically retrieve all your Zotero annotations/notes,
-and then push them to Readwise.
-You can use the forked repo without even changing a single line (of course if you're happy with the default settings!)
+You can use the [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync) repository that contains
+a GitHub Actions workflow to automatically sync your Zotero annotations/notes to Readwise on a schedule.
+
+**Quick Setup:**
+
+1. Fork [Zotero2Readwise-Sync](https://github.com/e-alizadeh/Zotero2Readwise-Sync)
+2. Add your secrets in the forked repo's Settings → Secrets:
+   - `READWISE_TOKEN` - Your Readwise access token
+   - `ZOTERO_KEY` - Your Zotero API key
+   - `ZOTERO_ID` - Your Zotero user/library ID
+3. The workflow runs automatically on schedule (or trigger manually)
+
+**Minimal Workflow Example:**
+
+```yaml
+name: Zotero to Readwise Sync
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"  # Weekly on Monday at 3 AM UTC
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: astral-sh/setup-uv@v4
+      - run: uvx --from zotero2readwise run
+        env:
+          READWISE_TOKEN: ${{ secrets.READWISE_TOKEN }}
+          ZOTERO_KEY: ${{ secrets.ZOTERO_KEY }}
+          ZOTERO_LIBRARY_ID: ${{ secrets.ZOTERO_ID }}
+```
 
 
 # Request a new feature or report a bug
