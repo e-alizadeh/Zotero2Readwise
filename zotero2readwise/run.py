@@ -71,6 +71,12 @@ def main():
         action="store_true",
         help="Do not write annotations that failed to port to a report file.",
     )
+    parser.add_argument(
+        "--custom_tag",
+        type=str,
+        default=None,
+        help="Add a custom tag to all highlights (e.g., 'zotero' will add '.zotero' tag to all highlights)",
+    )
 
     args = vars(parser.parse_args())
 
@@ -94,6 +100,7 @@ def main():
         include_filter_tags=args["include_filter_tags"],
         since=since,
         write_failures=not args["suppress_failures"],
+        custom_tag=args["custom_tag"],
     )
     zt2rw.run()
     if args["use_since"]:
