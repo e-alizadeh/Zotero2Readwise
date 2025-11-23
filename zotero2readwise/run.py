@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from os import environ
 
 from distutils.util import strtobool
 
@@ -7,22 +8,33 @@ from zotero2readwise.zt2rw import Zotero2Readwise
 
 
 def main():
-    parser = ArgumentParser(description="Generate Markdown files")
-    parser.add_argument(
-        "readwise_token",
-        help="Readwise Access Token (visit https://readwise.io/access_token)",
+    parser = ArgumentParser(
+        description="Sync Zotero annotations and notes to Readwise",
+        epilog="Credentials can be provided via arguments or environment variables "
+        "(READWISE_TOKEN, ZOTERO_KEY, ZOTERO_LIBRARY_ID, ZOTERO_LIBRARY_TYPE).",
     )
     parser.add_argument(
-        "zotero_key", help="Zotero API key (visit https://www.zotero.org/settings/keys)"
+        "readwise_token",
+        nargs="?",
+        default=environ.get("READWISE_TOKEN"),
+        help="Readwise Access Token (or set READWISE_TOKEN env var)",
+    )
+    parser.add_argument(
+        "zotero_key",
+        nargs="?",
+        default=environ.get("ZOTERO_KEY"),
+        help="Zotero API key (or set ZOTERO_KEY env var)",
     )
     parser.add_argument(
         "zotero_library_id",
-        help="Zotero User ID (visit https://www.zotero.org/settings/keys)",
+        nargs="?",
+        default=environ.get("ZOTERO_LIBRARY_ID"),
+        help="Zotero User ID (or set ZOTERO_LIBRARY_ID env var)",
     )
     parser.add_argument(
         "--library_type",
-        default="user",
-        help="Zotero Library type ('user': for personal library (default value), 'group': for a shared library)",
+        default=environ.get("ZOTERO_LIBRARY_TYPE", "user"),
+        help="Zotero Library type ('user': for personal library (default), 'group': for shared library)",
     )
     parser.add_argument(
         "--include_annotations",
@@ -79,6 +91,14 @@ def main():
     )
 
     args = vars(parser.parse_args())
+
+    # Validate required credentials
+    if not args["readwise_token"]:
+        parser.error("readwise_token is required (provide as argument or set READWISE_TOKEN env var)")
+    if not args["zotero_key"]:
+        parser.error("zotero_key is required (provide as argument or set ZOTERO_KEY env var)")
+    if not args["zotero_library_id"]:
+        parser.error("zotero_library_id is required (provide as argument or set ZOTERO_LIBRARY_ID env var)")
 
     # Cast str to bool values for bool flags
     for bool_arg in ["include_annotations", "include_notes"]:
