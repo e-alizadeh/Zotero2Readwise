@@ -1,3 +1,18 @@
+"""Main orchestrator module for syncing Zotero annotations to Readwise.
+
+This module provides the Zotero2Readwise class which coordinates the entire
+synchronization process between Zotero and Readwise.
+
+Example:
+    >>> from zotero2readwise.zt2rw import Zotero2Readwise
+    >>> zt_rw = Zotero2Readwise(
+    ...     readwise_token="your_token",
+    ...     zotero_key="your_key",
+    ...     zotero_library_id="your_id",
+    ... )
+    >>> zt_rw.run()
+"""
+
 from collections.abc import Sequence
 
 from zotero2readwise.readwise import Readwise
@@ -8,6 +23,33 @@ from zotero2readwise.zotero import (
 
 
 class Zotero2Readwise:
+    """Main orchestrator class for syncing Zotero annotations and notes to Readwise.
+
+    This class coordinates the entire synchronization process:
+    1. Retrieves annotations and/or notes from Zotero API
+    2. Formats them into a standardized format
+    3. Uploads them to Readwise as highlights
+
+    Attributes:
+        readwise: Readwise client instance for uploading highlights.
+        zotero_client: Pyzotero client instance for Zotero API access.
+        zotero: ZoteroAnnotationsNotes instance for formatting Zotero items.
+        include_annots: Whether to include annotations in sync.
+        include_notes: Whether to include notes in sync.
+        since: Unix timestamp to filter items modified after this time.
+        write_failures: Whether to save failed items to JSON files.
+
+    Example:
+        >>> zt_rw = Zotero2Readwise(
+        ...     readwise_token="rw_token",
+        ...     zotero_key="zot_key",
+        ...     zotero_library_id="12345",
+        ...     include_annotations=True,
+        ...     include_notes=True,
+        ... )
+        >>> zt_rw.run()
+    """
+
     def __init__(
         self,
         readwise_token: str,
@@ -23,6 +65,22 @@ class Zotero2Readwise:
         write_failures: bool = True,
         custom_tag: str | None = None,
     ):
+        """Initialize the Zotero2Readwise synchronizer.
+
+        Args:
+            readwise_token: Readwise API access token.
+            zotero_key: Zotero API key.
+            zotero_library_id: Zotero library ID (user ID or group ID).
+            zotero_library_type: Type of Zotero library, either "user" or "group".
+            include_annotations: Whether to sync Zotero annotations (highlights/comments).
+            include_notes: Whether to sync Zotero standalone notes.
+            filter_colors: Only include annotations with these highlight colors (hex codes).
+            filter_tags: Only include annotations with these tags.
+            include_filter_tags: If True, include filter tags in the synced items.
+            since: Unix timestamp; only sync items modified after this time.
+            write_failures: If True, save failed items to JSON files for debugging.
+            custom_tag: Optional custom tag to add to all Readwise highlights.
+        """
         self.readwise = Readwise(readwise_token, custom_tag=custom_tag)
         self.zotero_client = get_zotero_client(
             library_id=zotero_library_id,
@@ -56,6 +114,18 @@ class Zotero2Readwise:
         return items
 
     def run(self, zot_annots_notes: list[dict] = None) -> None:
+        """Execute the synchronization process.
+
+        This method orchestrates the full sync workflow:
+        1. Retrieves Zotero items (if not provided)
+        2. Formats items into ZoteroItem objects
+        3. Saves any failed items to JSON (if write_failures is True)
+        4. Uploads formatted items to Readwise
+
+        Args:
+            zot_annots_notes: Optional list of raw Zotero annotation/note dictionaries.
+                If not provided, items will be retrieved from Zotero API.
+        """
         if zot_annots_notes is None:
             zot_annots_notes = self.get_all_zotero_items()
 

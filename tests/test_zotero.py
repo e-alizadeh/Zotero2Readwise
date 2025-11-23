@@ -325,3 +325,433 @@ class TestZoteroAnnotationsNotes:
         assert len(formatted) == 1
         assert formatted[0].text == "这是中文文本 技術"
         assert formatted[0].comment == "中文评论"
+
+    def test_format_items_color_filter_excludes_non_matching(
+        self, mock_zotero_client, sample_zotero_annotation, sample_parent_item
+    ):
+        """Test that color filter excludes non-matching annotations."""
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=["#ff6666"],  # Red, but annotation is yellow (#ffd400)
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        formatted = zan.format_items([sample_zotero_annotation])
+
+        # Should be excluded because color doesn't match
+        assert len(formatted) == 0
+
+    def test_format_items_tag_filter(
+        self, mock_zotero_client, sample_zotero_annotation, sample_parent_item
+    ):
+        """Test formatting items with tag filter."""
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=["important"],
+            include_filter_tags=False,
+        )
+
+        formatted = zan.format_items([sample_zotero_annotation])
+
+        # Should be included because 'important' tag matches
+        assert len(formatted) == 1
+
+    def test_format_items_tag_filter_excludes(
+        self, mock_zotero_client, sample_zotero_annotation, sample_parent_item
+    ):
+        """Test that tag filter excludes non-matching annotations."""
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=["nonexistent"],
+            include_filter_tags=False,
+        )
+
+        formatted = zan.format_items([sample_zotero_annotation])
+
+        # Should be excluded because tag doesn't match
+        assert len(formatted) == 0
+
+    def test_format_items_include_filter_tags_true(
+        self, mock_zotero_client, sample_zotero_annotation, sample_parent_item
+    ):
+        """Test that filter tags are included when include_filter_tags=True."""
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=["important"],
+            include_filter_tags=True,
+        )
+
+        formatted = zan.format_items([sample_zotero_annotation])
+
+        assert len(formatted) == 1
+        # Tags should include the filter tag
+        assert "important" in formatted[0].tags
+
+    def test_format_items_include_filter_tags_false(
+        self, mock_zotero_client, sample_zotero_annotation, sample_parent_item
+    ):
+        """Test that filter tags are excluded when include_filter_tags=False."""
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=["important"],
+            include_filter_tags=False,
+        )
+
+        formatted = zan.format_items([sample_zotero_annotation])
+
+        assert len(formatted) == 1
+        # Tag 'important' should be excluded
+        assert "important" not in formatted[0].tags
+
+    def test_format_item_note_annotation_type(self, mock_zotero_client, sample_parent_item):
+        """Test formatting an annotation with 'note' annotationType."""
+        note_annotation = {
+            "key": "NOTE_ANNOT123",
+            "version": 100,
+            "data": {
+                "key": "NOTE_ANNOT123",
+                "version": 100,
+                "itemType": "annotation",
+                "annotationType": "note",
+                "annotationComment": "This is a note-type annotation",
+                "parentItem": "PARENT123",
+                "dateModified": "2023-01-01T12:00:00Z",
+                "tags": [],
+                "relations": {},
+            },
+            "links": {
+                "alternate": {"href": "https://www.zotero.org/users/123/items/NOTE_ANNOT123"}
+            },
+        }
+
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        formatted = zan.format_item(note_annotation)
+
+        assert formatted.text == "This is a note-type annotation"
+        assert formatted.comment == ""
+        assert formatted.annotation_type == "note"
+
+    def test_format_item_ink_annotation_raises(self, mock_zotero_client, sample_parent_item):
+        """Test that ink annotations raise NotImplementedError."""
+        ink_annotation = {
+            "key": "INK123",
+            "version": 100,
+            "data": {
+                "key": "INK123",
+                "version": 100,
+                "itemType": "annotation",
+                "annotationType": "ink",
+                "parentItem": "PARENT123",
+                "dateModified": "2023-01-01T12:00:00Z",
+                "tags": [],
+                "relations": {},
+            },
+            "links": {"alternate": {"href": "https://www.zotero.org/users/123/items/INK123"}},
+        }
+
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        with pytest.raises(NotImplementedError, match="ink"):
+            zan.format_item(ink_annotation)
+
+    def test_format_item_image_annotation_raises(self, mock_zotero_client, sample_parent_item):
+        """Test that image annotations raise NotImplementedError."""
+        image_annotation = {
+            "key": "IMAGE123",
+            "version": 100,
+            "data": {
+                "key": "IMAGE123",
+                "version": 100,
+                "itemType": "annotation",
+                "annotationType": "image",
+                "parentItem": "PARENT123",
+                "dateModified": "2023-01-01T12:00:00Z",
+                "tags": [],
+                "relations": {},
+            },
+            "links": {"alternate": {"href": "https://www.zotero.org/users/123/items/IMAGE123"}},
+        }
+
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        with pytest.raises(NotImplementedError, match="Image"):
+            zan.format_item(image_annotation)
+
+    def test_format_item_empty_text_raises(self, mock_zotero_client, sample_parent_item):
+        """Test that empty annotation text raises ValueError."""
+        empty_annotation = {
+            "key": "EMPTY123",
+            "version": 100,
+            "data": {
+                "key": "EMPTY123",
+                "version": 100,
+                "itemType": "annotation",
+                "annotationType": "highlight",
+                "annotationText": "",
+                "annotationComment": "",
+                "parentItem": "PARENT123",
+                "dateModified": "2023-01-01T12:00:00Z",
+                "tags": [],
+                "relations": {},
+            },
+            "links": {"alternate": {"href": "https://www.zotero.org/users/123/items/EMPTY123"}},
+        }
+
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        with pytest.raises(ValueError, match="No annotation or note data"):
+            zan.format_item(empty_annotation)
+
+    def test_format_item_unsupported_item_type_raises(self, mock_zotero_client, sample_parent_item):
+        """Test that unsupported item types raise NotImplementedError."""
+        unsupported_item = {
+            "key": "UNSUPPORTED123",
+            "version": 100,
+            "data": {
+                "key": "UNSUPPORTED123",
+                "version": 100,
+                "itemType": "attachment",  # Not annotation or note
+                "parentItem": "PARENT123",
+                "dateModified": "2023-01-01T12:00:00Z",
+                "tags": [],
+                "relations": {},
+            },
+            "links": {
+                "alternate": {"href": "https://www.zotero.org/users/123/items/UNSUPPORTED123"}
+            },
+        }
+
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        with pytest.raises(NotImplementedError, match="Only Zotero item types"):
+            zan.format_item(unsupported_item)
+
+    def test_get_item_metadata_caching(
+        self, mock_zotero_client, sample_zotero_annotation, sample_parent_item
+    ):
+        """Test that metadata is cached to avoid duplicate API calls."""
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        # First call
+        metadata1 = zan.get_item_metadata(sample_zotero_annotation)
+        call_count_1 = mock_zotero_client.item.call_count
+
+        # Second call with same annotation - should use cache
+        metadata2 = zan.get_item_metadata(sample_zotero_annotation)
+        call_count_2 = mock_zotero_client.item.call_count
+
+        assert metadata1 == metadata2
+        # Should not make additional API calls due to caching
+        assert call_count_2 == call_count_1
+
+    def test_format_items_sorted_by_title_and_sort_index(
+        self, mock_zotero_client, sample_parent_item
+    ):
+        """Test that formatted items are sorted by title and sort_index."""
+        mock_zotero_client.item.return_value = sample_parent_item
+
+        annot1 = {
+            "key": "ANNOT1",
+            "version": 100,
+            "data": {
+                "key": "ANNOT1",
+                "version": 100,
+                "itemType": "annotation",
+                "annotationType": "highlight",
+                "annotationText": "Text 1",
+                "annotationComment": "",
+                "annotationSortIndex": "00002",
+                "parentItem": "PARENT123",
+                "dateModified": "2023-01-01T12:00:00Z",
+                "tags": [],
+                "relations": {},
+            },
+            "links": {"alternate": {"href": "https://www.zotero.org/users/123/items/ANNOT1"}},
+        }
+
+        annot2 = {
+            "key": "ANNOT2",
+            "version": 100,
+            "data": {
+                "key": "ANNOT2",
+                "version": 100,
+                "itemType": "annotation",
+                "annotationType": "highlight",
+                "annotationText": "Text 2",
+                "annotationComment": "",
+                "annotationSortIndex": "00001",
+                "parentItem": "PARENT123",
+                "dateModified": "2023-01-01T12:00:00Z",
+                "tags": [],
+                "relations": {},
+            },
+            "links": {"alternate": {"href": "https://www.zotero.org/users/123/items/ANNOT2"}},
+        }
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        # Pass in reverse order
+        formatted = zan.format_items([annot1, annot2])
+
+        # Should be sorted by sort_index
+        assert len(formatted) == 2
+        assert formatted[0].sort_index == "00001"
+        assert formatted[1].sort_index == "00002"
+
+    def test_zotero_item_with_relations(self):
+        """Test ZoteroItem with dc:relation."""
+        item = ZoteroItem(
+            key="ABC123",
+            version=100,
+            item_type="annotation",
+            text="Sample text",
+            annotated_at="2023-01-01T12:00:00Z",
+            annotation_url="https://example.com",
+            relations={
+                "dc:relation": [
+                    "http://zotero.org/users/123/items/ABC",
+                    "http://zotero.org/users/123/items/DEF",
+                ]
+            },
+        )
+
+        # After post_init, relations should be extracted
+        assert item.relations == [
+            "http://zotero.org/users/123/items/ABC",
+            "http://zotero.org/users/123/items/DEF",
+        ]
+
+    def test_zotero_item_with_document_tags(self):
+        """Test ZoteroItem with document_tags."""
+        item = ZoteroItem(
+            key="ABC123",
+            version=100,
+            item_type="annotation",
+            text="Sample text",
+            annotated_at="2023-01-01T12:00:00Z",
+            annotation_url="https://example.com",
+            document_tags=[{"tag": "science"}, {"tag": "research"}],
+        )
+
+        # After post_init, document_tags should be converted to list of strings
+        assert item.document_tags == ["science", "research"]
+
+    def test_format_author_list_empty(self):
+        """Test format_author_list with empty list."""
+        authors = []
+        result = ZoteroItem.format_author_list(authors)
+        assert result == ""
+
+    @patch("zotero2readwise.zotero.Zotero")
+    def test_get_zotero_client_group_type(self, mock_zotero_class):
+        """Test getting Zotero client with group library type."""
+        get_zotero_client(library_id="123456", api_key="test_key", library_type="group")
+
+        mock_zotero_class.assert_called_once_with(
+            library_id="123456", library_type="group", api_key="test_key"
+        )
+
+    def test_get_item_metadata_institutional_author(self, mock_zotero_client):
+        """Test getting metadata with institutional author (no firstName/lastName)."""
+        parent_item_with_institutional = {
+            "key": "PARENT123",
+            "version": 99,
+            "data": {
+                "key": "PARENT123",
+                "version": 99,
+                "itemType": "journalArticle",
+                "title": "WHO Report",
+                "date": "2023",
+                "creators": [
+                    {"name": "World Health Organization"},
+                ],
+                "tags": [],
+            },
+            "links": {
+                "alternate": {"href": "https://www.zotero.org/users/123/items/PARENT123"},
+            },
+        }
+
+        annotation = {
+            "key": "ANNOT123",
+            "data": {
+                "key": "ANNOT123",
+                "parentItem": "PARENT123",
+            },
+        }
+
+        mock_zotero_client.item.return_value = parent_item_with_institutional
+
+        zan = ZoteroAnnotationsNotes(
+            mock_zotero_client,
+            filter_colors=[],
+            filter_tags=[],
+            include_filter_tags=False,
+        )
+
+        metadata = zan.get_item_metadata(annotation)
+
+        assert "World Health Organization" in metadata["creators"]

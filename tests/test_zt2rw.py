@@ -457,3 +457,155 @@ class TestZotero2Readwise:
 
         # Should complete without errors
         mock_readwise.post_zotero_annotations_to_readwise.assert_called_once()
+
+    @patch("zotero2readwise.zt2rw.get_zotero_client")
+    @patch("zotero2readwise.zt2rw.Readwise")
+    @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
+    def test_initialization_with_custom_tag(
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
+    ):
+        """Test initialization with custom tag."""
+        mock_client = Mock()
+        mock_get_client.return_value = mock_client
+
+        Zotero2Readwise(
+            readwise_token=readwise_token,
+            zotero_key=zotero_credentials["key"],
+            zotero_library_id=zotero_credentials["library_id"],
+            custom_tag="zotero",
+        )
+
+        mock_rw_class.assert_called_once_with(readwise_token, custom_tag="zotero")
+
+    @patch("zotero2readwise.zt2rw.get_zotero_client")
+    @patch("zotero2readwise.zt2rw.Readwise")
+    @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
+    def test_get_all_zotero_items_neither_annotations_nor_notes(
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
+    ):
+        """Test retrieving neither annotations nor notes returns empty list."""
+        mock_client = Mock()
+        mock_get_client.return_value = mock_client
+
+        zt_rw = Zotero2Readwise(
+            readwise_token=readwise_token,
+            zotero_key=zotero_credentials["key"],
+            zotero_library_id=zotero_credentials["library_id"],
+            include_annotations=False,
+            include_notes=False,
+        )
+
+        items = zt_rw.get_all_zotero_items()
+
+        assert len(items) == 0
+        mock_client.items.assert_not_called()
+
+    @patch("zotero2readwise.zt2rw.get_zotero_client")
+    @patch("zotero2readwise.zt2rw.Readwise")
+    @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
+    def test_run_no_failed_items(
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
+    ):
+        """Test running sync with no failed items doesn't save JSON."""
+        mock_client = Mock()
+        mock_get_client.return_value = mock_client
+
+        mock_zotero = Mock()
+        mock_zan_class.return_value = mock_zotero
+
+        mock_readwise = Mock()
+        mock_rw_class.return_value = mock_readwise
+
+        zt_rw = Zotero2Readwise(
+            readwise_token=readwise_token,
+            zotero_key=zotero_credentials["key"],
+            zotero_library_id=zotero_credentials["library_id"],
+            write_failures=True,
+        )
+
+        provided_items = [{"key": "ITEM1"}]
+        mock_zotero.format_items.return_value = []
+        mock_zotero.failed_items = []  # No failures
+
+        zt_rw.run(provided_items)
+
+        # Should not save when there are no failed items
+        mock_zotero.save_failed_items_to_json.assert_not_called()
+
+    @patch("zotero2readwise.zt2rw.get_zotero_client")
+    @patch("zotero2readwise.zt2rw.Readwise")
+    @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
+    def test_initialization_group_library(
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        readwise_token,
+    ):
+        """Test initialization with group library type."""
+        mock_client = Mock()
+        mock_get_client.return_value = mock_client
+
+        Zotero2Readwise(
+            readwise_token=readwise_token,
+            zotero_key="group_key",
+            zotero_library_id="group_12345",
+            zotero_library_type="group",
+        )
+
+        mock_get_client.assert_called_once_with(
+            library_id="group_12345",
+            library_type="group",
+            api_key="group_key",
+        )
+
+    @patch("zotero2readwise.zt2rw.get_zotero_client")
+    @patch("zotero2readwise.zt2rw.Readwise")
+    @patch("zotero2readwise.zt2rw.ZoteroAnnotationsNotes")
+    def test_run_with_empty_items(
+        self,
+        mock_zan_class,
+        mock_rw_class,
+        mock_get_client,
+        zotero_credentials,
+        readwise_token,
+    ):
+        """Test running sync with empty items list."""
+        mock_client = Mock()
+        mock_get_client.return_value = mock_client
+
+        mock_zotero = Mock()
+        mock_zan_class.return_value = mock_zotero
+
+        mock_readwise = Mock()
+        mock_rw_class.return_value = mock_readwise
+
+        zt_rw = Zotero2Readwise(
+            readwise_token=readwise_token,
+            zotero_key=zotero_credentials["key"],
+            zotero_library_id=zotero_credentials["library_id"],
+        )
+
+        mock_zotero.format_items.return_value = []
+        mock_zotero.failed_items = []
+
+        # Run with empty list
+        zt_rw.run([])
+
+        mock_zotero.format_items.assert_called_once_with([])
+        mock_readwise.post_zotero_annotations_to_readwise.assert_called_once_with([])

@@ -1,3 +1,16 @@
+"""Zotero API interaction module.
+
+This module provides classes and functions for interacting with the Zotero API
+to retrieve and format annotations and notes.
+
+Classes:
+    ZoteroItem: Dataclass representing a formatted Zotero annotation or note.
+    ZoteroAnnotationsNotes: Handler for retrieving and formatting Zotero items.
+
+Functions:
+    get_zotero_client: Create a Pyzotero client instance.
+"""
+
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from json import dump
@@ -10,6 +23,33 @@ from zotero2readwise import FAILED_ITEMS_DIR
 
 @dataclass
 class ZoteroItem:
+    """Dataclass representing a formatted Zotero annotation or note.
+
+    This class standardizes the representation of Zotero items for processing
+    and conversion to Readwise highlights.
+
+    Attributes:
+        key: Unique Zotero item key.
+        version: Zotero item version number.
+        item_type: Type of item ("annotation" or "note").
+        text: The annotation text or note content.
+        annotated_at: ISO timestamp when the item was modified.
+        annotation_url: URL to the item in Zotero web library.
+        comment: Optional comment/note attached to a highlight.
+        title: Title of the parent document.
+        tags: List of tag strings from the annotation.
+        document_tags: List of tags from the parent document.
+        document_type: Type of the parent document (e.g., "journalArticle", "book").
+        annotation_type: Type of annotation ("highlight", "note", "ink", "image").
+        creators: Formatted author string (comma-separated).
+        source_url: URL to the parent item in Zotero.
+        attachment_url: URL to the PDF attachment (if any).
+        page_label: Page number/label where the annotation appears.
+        color: Hex color code of the highlight (e.g., "#ffd400").
+        relations: Related Zotero items (dc:relation).
+        sort_index: Zotero's annotationSortIndex for ordering within a document.
+    """
+
     key: str
     version: int
     item_type: str
@@ -46,7 +86,23 @@ class ZoteroItem:
             self.creators = self.format_author_list(self.creators)
 
     @staticmethod
-    def format_author_list(authors):
+    def format_author_list(authors: list[str]) -> str:
+        """Format a list of author names into a comma-separated string.
+
+        Handles long author lists by truncating and adding "et al." when the
+        total length would exceed 1024 characters.
+
+        Args:
+            authors: List of author name strings.
+
+        Returns:
+            Formatted author string, e.g., "John Doe, Jane Smith" or
+            "John Doe, Jane Smith, et al." if truncated.
+
+        Example:
+            >>> ZoteroItem.format_author_list(["John Doe", "Jane Smith"])
+            "John Doe, Jane Smith"
+        """
         MAX_LENGTH = 1024
         MAX_AUTHOR_LENGTH = 256
         SEP = ", "
@@ -68,6 +124,11 @@ class ZoteroItem:
         return result
 
     def get_nonempty_params(self) -> dict:
+        """Return a dictionary of non-empty/non-None attributes.
+
+        Returns:
+            Dictionary containing only attributes with truthy values.
+        """
         return {k: v for k, v in self.__dict__.items() if v}
 
 
@@ -125,6 +186,28 @@ def get_zotero_client(
 
 
 class ZoteroAnnotationsNotes:
+    """Handler for retrieving and formatting Zotero annotations and notes.
+
+    This class manages the formatting of raw Zotero API responses into
+    standardized ZoteroItem objects, with support for filtering by color
+    and tags.
+
+    Attributes:
+        zot: Pyzotero client instance.
+        failed_items: List of items that failed to format.
+        filter_colors: Hex color codes to filter annotations by.
+        filter_tags: Tag names to filter annotations by.
+        include_filter_tags: Whether to include filter tags in output.
+
+    Example:
+        >>> zan = ZoteroAnnotationsNotes(
+        ...     zotero_client,
+        ...     filter_colors=["#ffd400"],
+        ...     filter_tags=["important"],
+        ... )
+        >>> formatted = zan.format_items(raw_annotations)
+    """
+
     def __init__(
         self,
         zotero_client: Zotero,
@@ -132,6 +215,14 @@ class ZoteroAnnotationsNotes:
         filter_tags: Sequence[str],
         include_filter_tags: bool = False,
     ):
+        """Initialize the ZoteroAnnotationsNotes handler.
+
+        Args:
+            zotero_client: Pyzotero Zotero client instance.
+            filter_colors: Sequence of hex color codes to filter by.
+            filter_tags: Sequence of tag names to filter by.
+            include_filter_tags: If True, include filter tags in the output items.
+        """
         self.zot = zotero_client
         self.failed_items: list[dict] = []
         self._cache: dict = {}
@@ -141,6 +232,23 @@ class ZoteroAnnotationsNotes:
         self.include_filter_tags: bool = include_filter_tags
 
     def get_item_metadata(self, annot: dict) -> dict:
+        """Retrieve metadata for an annotation's parent document.
+
+        Fetches and caches metadata from the parent item (and top-level item
+        if the parent is an attachment) including title, authors, tags, and URLs.
+
+        Args:
+            annot: Raw Zotero annotation dictionary from API.
+
+        Returns:
+            Dictionary containing document metadata with keys:
+            - title: Document title
+            - tags: List of tag dictionaries
+            - document_type: Zotero item type
+            - source_url: Link to item in Zotero
+            - creators: List of author names
+            - attachment_url: Link to PDF attachment (if available)
+        """
         data = annot["data"]
         # A Zotero annotation or note must have a parent with parentItem key.
         parent_item_key = data["parentItem"]
@@ -177,9 +285,11 @@ class ZoteroAnnotationsNotes:
             metadata["creators"] = [
                 # Some creators have firstName/lastName, others have single 'name' field
                 # (e.g., institutional authors like "World Health Organization")
-                f"{creator['firstName']} {creator['lastName']}"
-                if "firstName" in creator and "lastName" in creator
-                else creator.get("name", "Unknown")
+                (
+                    f"{creator['firstName']} {creator['lastName']}"
+                    if "firstName" in creator and "lastName" in creator
+                    else creator.get("name", "Unknown")
+                )
                 for creator in data["creators"]
             ]
         if (
@@ -192,6 +302,19 @@ class ZoteroAnnotationsNotes:
         return metadata
 
     def format_item(self, annot: dict) -> ZoteroItem:
+        """Format a single Zotero annotation or note into a ZoteroItem.
+
+        Args:
+            annot: Raw Zotero annotation/note dictionary from API.
+
+        Returns:
+            Formatted ZoteroItem instance.
+
+        Raises:
+            NotImplementedError: If the annotation type is not supported
+                (ink, image annotations) or item type is unsupported.
+            ValueError: If the annotation/note has no text content.
+        """
         data = annot["data"]
         item_type = data["itemType"]
         annotation_type = data.get("annotationType")
@@ -207,11 +330,15 @@ class ZoteroAnnotationsNotes:
                 text = data["annotationComment"]
                 comment = ""
             elif annotation_type == "ink":
-                raise NotImplementedError("Handwritten (ink) annotations are not currently supported.")
+                raise NotImplementedError(
+                    "Handwritten (ink) annotations are not currently supported."
+                )
             elif annotation_type == "image":
                 raise NotImplementedError("Image/area annotations are not currently supported.")
             else:
-                raise NotImplementedError(f"Annotation type '{annotation_type}' is not currently supported.")
+                raise NotImplementedError(
+                    f"Annotation type '{annotation_type}' is not currently supported."
+                )
         elif item_type == "note":
             text = data["note"]
             comment = ""
@@ -257,6 +384,18 @@ class ZoteroAnnotationsNotes:
         )
 
     def format_items(self, annots: list[dict]) -> list[ZoteroItem]:
+        """Format multiple Zotero annotations/notes into ZoteroItems.
+
+        Processes each annotation, applying color and tag filters, and handles
+        errors gracefully by adding failed items to the failed_items list.
+
+        Args:
+            annots: List of raw Zotero annotation/note dictionaries.
+
+        Returns:
+            List of successfully formatted ZoteroItem instances, sorted by
+            title and then by sort_index (reading order within each document).
+        """
         formatted_annots = []
         print(
             f"ZOTERO: Start formatting {len(annots)} annotations/notes...\n"
@@ -300,7 +439,13 @@ class ZoteroAnnotationsNotes:
         print(finished_msg)
         return formatted_annots
 
-    def save_failed_items_to_json(self, json_filepath_failed_items: str = None):
+    def save_failed_items_to_json(self, json_filepath_failed_items: str = None) -> None:
+        """Save failed items to a JSON file for debugging.
+
+        Args:
+            json_filepath_failed_items: Optional filename for the output file.
+                Defaults to "failed_zotero_items.json".
+        """
         FAILED_ITEMS_DIR.mkdir(parents=True, exist_ok=True)
         if json_filepath_failed_items:
             out_filepath = FAILED_ITEMS_DIR.joinpath(json_filepath_failed_items)
