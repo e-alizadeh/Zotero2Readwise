@@ -174,7 +174,12 @@ class ZoteroAnnotationsNotes:
         }
         if "creators" in data:
             metadata["creators"] = [
-                creator["firstName"] + " " + creator["lastName"] for creator in data["creators"]
+                # Some creators have firstName/lastName, others have single 'name' field
+                # (e.g., institutional authors like "World Health Organization")
+                f"{creator['firstName']} {creator['lastName']}"
+                if "firstName" in creator and "lastName" in creator
+                else creator.get("name", "Unknown")
+                for creator in data["creators"]
             ]
         if (
             "attachment" in top_item["links"]
@@ -200,8 +205,12 @@ class ZoteroAnnotationsNotes:
             elif annotation_type == "note":
                 text = data["annotationComment"]
                 comment = ""
+            elif annotation_type == "ink":
+                raise NotImplementedError("Handwritten (ink) annotations are not currently supported.")
+            elif annotation_type == "image":
+                raise NotImplementedError("Image/area annotations are not currently supported.")
             else:
-                raise NotImplementedError("Handwritten annotations are not currently supported.")
+                raise NotImplementedError(f"Annotation type '{annotation_type}' is not currently supported.")
         elif item_type == "note":
             text = data["note"]
             comment = ""
