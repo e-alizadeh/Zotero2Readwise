@@ -1,6 +1,62 @@
 # CHANGELOG
 
 
+## v1.4.0 (2025-11-23)
+
+### Bug Fixes
+
+- Handle authors with single 'name' field and improve annotation type errors
+  ([`05ce8ac`](https://github.com/e-alizadeh/Zotero2Readwise/commit/05ce8acf056fbe0c7c33379a7b94f5d7179c36d1))
+
+- Fix KeyError: 'firstName' for institutional authors that use a single 'name' field instead of
+  firstName/lastName (e.g., "World Health Organization") - Add explicit handling for 'ink'
+  (handwritten) and 'image' (area) annotation types - Improve error messages for unsupported
+  annotation types
+
+- Keep 'run' CLI entry point for backward compatibility
+  ([`433b23c`](https://github.com/e-alizadeh/Zotero2Readwise/commit/433b23c2ef55021255c3de6a1a7f296ae3caecec))
+
+Add 'zotero2readwise' as new entry point while keeping 'run' alias to avoid breaking existing
+  workflows and scripts.
+
+### Chores
+
+- Update uv.lock
+  ([`781f7e1`](https://github.com/e-alizadeh/Zotero2Readwise/commit/781f7e170e507f6056a46c018c5a729522502d92))
+
+- Update uv.lock for version 1.3.1
+  ([`ed53c9d`](https://github.com/e-alizadeh/Zotero2Readwise/commit/ed53c9d1be84d71397d31666976b2a94e0e34a34))
+
+### Documentation
+
+- Update README with simplified automation workflow
+  ([`8107ee6`](https://github.com/e-alizadeh/Zotero2Readwise/commit/8107ee6b3c8985067ba50a8351202a3b6cf5e2b2))
+
+- Remove automation-example.yaml (refer to Zotero2Readwise-Sync repo instead) - Add minimal workflow
+  example using uv/uvx to main README - Revert workflows/README.md to original (CI/release docs
+  only)
+
+### Features
+
+- Add CLI improvements and example automation workflow
+  ([`d6ad247`](https://github.com/e-alizadeh/Zotero2Readwise/commit/d6ad247be36b71cb0ea327606826cb3539ca57e9))
+
+- Rename CLI entry point from 'run' to 'zotero2readwise' for clarity - Support environment variables
+  for credentials (READWISE_TOKEN, ZOTERO_KEY, ZOTERO_LIBRARY_ID, ZOTERO_LIBRARY_TYPE) - Add example
+  GitHub Actions workflow using uv and uvx for simple automation - Update workflows README with
+  automation setup instructions
+
+The new workflow is much simpler: - No checkout needed - Uses `uvx zotero2readwise` for one-line
+  execution - Credentials via env vars (more secure than CLI args)
+
+- Add custom_tag and annotation sorting features (#21, #75)
+  ([`5b5000e`](https://github.com/e-alizadeh/Zotero2Readwise/commit/5b5000e3b72ee111cfefcba264d97062548d855d))
+
+- Add --custom_tag CLI argument to prepend a tag to all highlights - Sort annotations by document
+  title and annotationSortIndex for proper reading order in Readwise - Add sort_index field to
+  ZoteroItem to store Zotero's annotationSortIndex
+
+
 ## v1.3.1 (2025-11-22)
 
 ### Bug Fixes
