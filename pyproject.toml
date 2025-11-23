@@ -46,6 +46,7 @@ Documentation = "https://github.com/e-alizadeh/Zotero2Readwise"
 
 [project.scripts]
 zotero2readwise = "zotero2readwise.run:main"
+run = "zotero2readwise.run:main"  # Backward compatibility alias
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
