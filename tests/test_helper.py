@@ -78,7 +78,7 @@ class TestWriteLibraryVersion:
 
     def test_write_library_version(self, tmp_path, mock_zotero_client):
         """Test writing library version to file."""
-        since_file = tmp_path / "since"
+        _since_file = tmp_path / "since"  # noqa: F841
         mock_zotero_client.last_modified_version.return_value = 54321
 
         m = mock_open()

@@ -160,7 +160,7 @@ def main() -> None:
         try:
             args[bool_arg] = bool(strtobool(args[bool_arg]))
         except ValueError:
-            raise ValueError(f"Invalid value for --{bool_arg}. Use 'n' or 'y' (default).")
+            raise ValueError(f"Invalid value for --{bool_arg}. Use 'n' or 'y' (default).") from None
 
     since = read_library_version() if args["use_since"] else 0
     zt2rw = Zotero2Readwise(

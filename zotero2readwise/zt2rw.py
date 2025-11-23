@@ -113,7 +113,7 @@ class Zotero2Readwise:
 
         return items
 
-    def run(self, zot_annots_notes: list[dict] = None) -> None:
+    def run(self, zot_annots_notes: list[dict] | None = None) -> None:
         """Execute the synchronization process.
 
         This method orchestrates the full sync workflow:

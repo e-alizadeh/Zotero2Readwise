@@ -60,7 +60,7 @@ class ZoteroItem:
     title: str | None = None
     tags: list[str] | None = field(init=True, default=None)
     document_tags: list[dict] | None = field(init=True, default=None)
-    document_type: int | None = None
+    document_type: str | None = None
     annotation_type: str | None = None
     creators: str | None = field(init=True, default=None)
     source_url: str | None = None
@@ -133,7 +133,9 @@ class ZoteroItem:
 
 
 def get_zotero_client(
-    library_id: str = None, api_key: str = None, library_type: str = "user"
+    library_id: str | None = None,
+    api_key: str | None = None,
+    library_type: str = "user",
 ) -> Zotero:
     """Create a Zotero client object from Pyzotero library
 
@@ -162,7 +164,7 @@ def get_zotero_client(
             raise ValueError(
                 "No value for library_id is found. "
                 "You can set it as an environment variable `ZOTERO_LIBRARY_ID` or use `library_id` to set it."
-            )
+            ) from None
 
     if api_key is None:
         try:
@@ -171,7 +173,7 @@ def get_zotero_client(
             raise ValueError(
                 "No value for api_key is found. "
                 "You can set it as an environment variable `ZOTERO_KEY` or use `api_key` to set it."
-            )
+            ) from None
 
     if library_type is None:
         library_type = environ.get("LIBRARY_TYPE", "user")
@@ -439,7 +441,7 @@ class ZoteroAnnotationsNotes:
         print(finished_msg)
         return formatted_annots
 
-    def save_failed_items_to_json(self, json_filepath_failed_items: str = None) -> None:
+    def save_failed_items_to_json(self, json_filepath_failed_items: str | None = None) -> None:
         """Save failed items to a JSON file for debugging.
 
         Args:

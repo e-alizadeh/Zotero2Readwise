@@ -124,7 +124,7 @@ class TestGetZoteroClient:
     @patch("zotero2readwise.zotero.Zotero")
     def test_get_zotero_client_with_params(self, mock_zotero_class):
         """Test getting Zotero client with provided parameters."""
-        client = get_zotero_client(library_id="123456", api_key="test_key", library_type="user")
+        _client = get_zotero_client(library_id="123456", api_key="test_key", library_type="user")  # noqa: F841
 
         mock_zotero_class.assert_called_once_with(
             library_id="123456", library_type="user", api_key="test_key"
@@ -137,7 +137,7 @@ class TestGetZoteroClient:
     )
     def test_get_zotero_client_from_env(self, mock_zotero_class):
         """Test getting Zotero client from environment variables."""
-        client = get_zotero_client()
+        _client = get_zotero_client()  # noqa: F841
 
         mock_zotero_class.assert_called_once_with(
             library_id="789012", library_type="user", api_key="env_test_key"
@@ -256,7 +256,7 @@ class TestZoteroAnnotationsNotes:
             include_filter_tags=False,
         )
 
-        formatted = zan.format_items([sample_zotero_annotation, bad_annotation])
+        _formatted = zan.format_items([sample_zotero_annotation, bad_annotation])  # noqa: F841
 
         # Both should fail due to mock error
         assert len(zan.failed_items) == 2

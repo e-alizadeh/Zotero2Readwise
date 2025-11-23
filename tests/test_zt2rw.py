@@ -59,7 +59,7 @@ class TestZotero2Readwise:
         mock_client = Mock()
         mock_get_client.return_value = mock_client
 
-        zt_rw = Zotero2Readwise(
+        _zt_rw = Zotero2Readwise(  # noqa: F841
             readwise_token=readwise_token,
             zotero_key=zotero_credentials["key"],
             zotero_library_id=zotero_credentials["library_id"],

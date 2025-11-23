@@ -167,15 +167,18 @@ class Readwise:
             )
 
     @staticmethod
-    def convert_tags_to_readwise_format(tags: list[str]) -> str:
+    def convert_tags_to_readwise_format(tags: list[str] | None) -> str:
         """Convert tags to Readwise's inline tag format.
 
         Args:
-            tags: List of tag strings.
+            tags: List of tag strings, or None.
 
         Returns:
-            Space-separated string of tags in Readwise format (e.g., ".tag1 .tag2").
+            Space-separated string of tags in Readwise format (e.g., ".tag1 .tag2"),
+            or empty string if tags is None or empty.
         """
+        if not tags:
+            return ""
         return " ".join([f".{sanitize_tag(t.lower())}" for t in tags])
 
     def format_readwise_note(self, tags: list[str] | None, comment: str | None) -> str | None:
@@ -298,7 +301,7 @@ class Readwise:
         )
         print(finished_msg)
 
-    def save_failed_items_to_json(self, json_filepath_failed_items: str = None) -> None:
+    def save_failed_items_to_json(self, json_filepath_failed_items: str | None = None) -> None:
         """Save failed highlights to a JSON file for debugging.
 
         Args:

@@ -12,7 +12,21 @@ class TestStrtobool:
 
     @pytest.mark.parametrize(
         "value",
-        ["y", "Y", "yes", "YES", "Yes", "t", "T", "true", "TRUE", "True", "on", "ON", "1"],
+        [
+            "y",
+            "Y",
+            "yes",
+            "YES",
+            "Yes",
+            "t",
+            "T",
+            "true",
+            "TRUE",
+            "True",
+            "on",
+            "ON",
+            "1",
+        ],
     )
     def test_truthy_values(self, value):
         """Test that truthy string values return 1."""
@@ -20,7 +34,21 @@ class TestStrtobool:
 
     @pytest.mark.parametrize(
         "value",
-        ["n", "N", "no", "NO", "No", "f", "F", "false", "FALSE", "False", "off", "OFF", "0"],
+        [
+            "n",
+            "N",
+            "no",
+            "NO",
+            "No",
+            "f",
+            "F",
+            "false",
+            "FALSE",
+            "False",
+            "off",
+            "OFF",
+            "0",
+        ],
     )
     def test_falsy_values(self, value):
         """Test that falsy string values return 0."""
@@ -48,9 +76,7 @@ class TestMainFunction:
     @patch("zotero2readwise.run.Zotero2Readwise")
     @patch("zotero2readwise.run.read_library_version")
     @patch("zotero2readwise.run.write_library_version")
-    def test_main_with_positional_args(
-        self, mock_write_version, mock_read_version, mock_zt2rw
-    ):
+    def test_main_with_positional_args(self, mock_write_version, mock_read_version, mock_zt2rw):
         """Test main function with positional arguments."""
         mock_instance = Mock()
         mock_zt2rw.return_value = mock_instance
@@ -243,9 +269,7 @@ class TestMainFunction:
     @patch("zotero2readwise.run.Zotero2Readwise")
     @patch("zotero2readwise.run.read_library_version")
     @patch("zotero2readwise.run.write_library_version")
-    def test_main_with_use_since(
-        self, mock_write_version, mock_read_version, mock_zt2rw
-    ):
+    def test_main_with_use_since(self, mock_write_version, mock_read_version, mock_zt2rw):
         """Test main function with --use_since."""
         mock_instance = Mock()
         mock_zt2rw.return_value = mock_instance

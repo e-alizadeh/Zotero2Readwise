@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-from zotero2readwise.zt2rw import Zotero2Readwise
+from zotero2readwise.zt2rw import Zotero2Readwise  # noqa: E402
 
 
 def test_integration():
